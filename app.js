@@ -1,9 +1,19 @@
-var win32ole = require('win32ole');
+var edge = require('edge');
+var excel = edge.func({
+    source: __dirname + "/cs/Excel.cs",
+    references: [
+        'System.Data.dll',
+        __dirname + '/lib/NetOffice.dll',
+        __dirname + '/lib/VBIDEApi.dll',
+        __dirname + '/lib/ExcelApi.dll',
+        __dirname + '/lib/OfficeApi.dll',
+        __dirname + '/lib/exceldna/ExcelDna.Integration.dll'
+    ],
+    typeName: 'GSEXCEL.ExcelClass',
+    methodName: 'Invoke' // This must be Func<object,Task<object>>
+});
 
-var xl = win32ole.client.Dispatch('Excel.Application');
-xl.Visible = true;
-var book = xl.Workbooks.Add();
-var sheet = book.Worksheets(1);
-var result = book.SaveAs('testfileutf8.xls');
-xl.Workbooks.Close();
-xl.Quit();
+excel(3, function(error, result){
+    console.log(result);
+    console.log(error);
+});
