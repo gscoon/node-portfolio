@@ -31,7 +31,8 @@ namespace GSEXCEL
             //excelApplication.Quit();
             //excelApplication.Dispose();
             //return Helper.AddSeven(v);
-            return XlCalculation.xlCalculationManual;
+            // return XlCalculation.xlCalculationManual;
+            return excelApplication.Tools.AddIns.length;
 
         }
     }

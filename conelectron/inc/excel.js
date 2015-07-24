@@ -1,22 +1,19 @@
-var edge = require('edge');
-
+var edge = require('electron-edge2');
+var baseDir = './';
 var excelClass = function(){
-    this.simpleMath = function(i){
-        this.call(i, function(error, result){
-            console.log(result);
-            console.log(error);
-        });
+    this.simpleMath = function(i, func){
+        this.call(i, func);
     }
 
     this.call = edge.func({
-        source: __dirname + "/cs/Excel.cs",
+        source: baseDir + "cs/Excel.cs",
         references: [
             'System.Data.dll',
-            __dirname + '/lib/NetOffice.dll',
-            __dirname + '/lib/VBIDEApi.dll',
-            __dirname + '/lib/ExcelApi.dll',
-            __dirname + '/lib/OfficeApi.dll',
-            __dirname + '/lib/exceldna/ExcelDna.Integration.dll'
+            baseDir + 'lib/NetOffice.dll',
+            baseDir + 'lib/VBIDEApi.dll',
+            baseDir + 'lib/ExcelApi.dll',
+            baseDir + 'lib/OfficeApi.dll',
+            baseDir + 'lib/exceldna/ExcelDna.Integration.dll'
         ],
         typeName: 'GSEXCEL.ExcelClass',
         methodName: 'Invoke' // This must be Func<object,Task<object>>

@@ -1,0 +1,519 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\nvmw\\v0.10.2\\\\node.exe',
+1 verbose cli   'C:\\nvmw\\v0.10.2\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'electron-edge' ]
+2 info using npm@1.2.15
+3 info using node@v0.10.2
+4 verbose node symlink C:\nvmw\v0.10.2\\node.exe
+5 verbose read json H:\projects\node-portfolio\package.json
+6 verbose read json H:\projects\node-portfolio\node_modules\edge\package.json
+7 verbose read json H:\projects\node-portfolio\node_modules\electron-edge\package.json
+8 verbose read json H:\projects\node-portfolio\node_modules\win32ole\package.json
+9 verbose from cache H:\projects\node-portfolio\package.json
+10 verbose readDependencies using package.json deps
+11 verbose cache add [ 'electron-edge', null ]
+12 verbose cache add name=undefined spec="electron-edge" args=["electron-edge",null]
+13 verbose parsed url { protocol: null,
+13 verbose parsed url   slashes: null,
+13 verbose parsed url   auth: null,
+13 verbose parsed url   host: null,
+13 verbose parsed url   port: null,
+13 verbose parsed url   hostname: null,
+13 verbose parsed url   hash: null,
+13 verbose parsed url   search: null,
+13 verbose parsed url   query: null,
+13 verbose parsed url   pathname: 'electron-edge',
+13 verbose parsed url   path: 'electron-edge',
+13 verbose parsed url   href: 'electron-edge' }
+14 silly lockFile 7a11e3ec-electron-edge electron-edge
+15 verbose lock electron-edge C:\Users\gerren\AppData\Roaming\npm-cache\7a11e3ec-electron-edge.lock
+16 silly lockFile 7a11e3ec-electron-edge electron-edge
+17 silly lockFile 7a11e3ec-electron-edge electron-edge
+18 verbose addNamed [ 'electron-edge', '' ]
+19 verbose addNamed [ null, '' ]
+20 silly lockFile 05c60c18-electron-edge electron-edge@
+21 verbose lock electron-edge@ C:\Users\gerren\AppData\Roaming\npm-cache\05c60c18-electron-edge.lock
+22 silly addNameRange { name: 'electron-edge', range: '', hasData: false }
+23 verbose url raw electron-edge
+24 verbose url resolving [ 'https://registry.npmjs.org/', './electron-edge' ]
+25 verbose url resolved https://registry.npmjs.org/electron-edge
+26 info trying registry request attempt 1 at 02:51:09
+27 http GET https://registry.npmjs.org/electron-edge
+28 http 200 https://registry.npmjs.org/electron-edge
+29 silly registry.get cb [ 200,
+29 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+29 silly registry.get     etag: '"AH7I37JMH9PIXGZPSEXXJW0UB"',
+29 silly registry.get     'content-type': 'application/json',
+29 silly registry.get     'cache-control': 'max-age=60',
+29 silly registry.get     'content-length': '64815',
+29 silly registry.get     'accept-ranges': 'bytes',
+29 silly registry.get     date: 'Fri, 24 Jul 2015 06:50:25 GMT',
+29 silly registry.get     via: '1.1 varnish',
+29 silly registry.get     age: '0',
+29 silly registry.get     connection: 'keep-alive',
+29 silly registry.get     'x-served-by': 'cache-jfk1025-JFK',
+29 silly registry.get     'x-cache': 'MISS',
+29 silly registry.get     'x-cache-hits': '0',
+29 silly registry.get     'x-timer': 'S1437720624.667784,VS0,VE591',
+29 silly registry.get     vary: 'Accept' } ]
+30 silly addNameRange number 2 { name: 'electron-edge', range: '', hasData: true }
+31 silly addNameRange versions [ 'electron-edge', [ '0.10.2-pre0' ] ]
+32 verbose addNamed [ 'electron-edge', '0.10.2-pre0' ]
+33 verbose addNamed [ '0.10.2-pre0', '0.10.2-pre0' ]
+34 silly lockFile 2953bc18-electron-edge-0-10-2-pre0 electron-edge@0.10.2-pre0
+35 verbose lock electron-edge@0.10.2-pre0 C:\Users\gerren\AppData\Roaming\npm-cache\2953bc18-electron-edge-0-10-2-pre0.lock
+36 verbose read json C:\Users\gerren\AppData\Roaming\npm-cache\electron-edge\0.10.2-pre0\package\package.json
+37 silly lockFile 2953bc18-electron-edge-0-10-2-pre0 electron-edge@0.10.2-pre0
+38 silly lockFile 2953bc18-electron-edge-0-10-2-pre0 electron-edge@0.10.2-pre0
+39 silly lockFile 05c60c18-electron-edge electron-edge@
+40 silly lockFile 05c60c18-electron-edge electron-edge@
+41 silly resolved [ { name: 'electron-edge',
+41 silly resolved     author:
+41 silly resolved      { name: 'Tomasz Janczuk',
+41 silly resolved        email: 'tomasz@janczuk.org',
+41 silly resolved        url: 'http://tomasz.janczuk.org' },
+41 silly resolved     version: '0.10.2-pre0',
+41 silly resolved     description: 'Electron-Edge.js: run .NET and Node.js in-process in Electron',
+41 silly resolved     tags: [ 'owin', 'edge', 'net', 'clr', 'c#', 'mono', 'managed', '.net' ],
+41 silly resolved     main: './lib/edge.js',
+41 silly resolved     engines: { node: '>= 0.8' },
+41 silly resolved     licenses: [ [Object] ],
+41 silly resolved     dependencies: { 'edge-cs': '0.2.7', nan: '^1.6.2' },
+41 silly resolved     devDependencies: { mocha: '1.8.1', jshint: '1.1.0' },
+41 silly resolved     homepage: 'https://github.com/kexplo/electron-edge',
+41 silly resolved     repository:
+41 silly resolved      { type: 'git',
+41 silly resolved        url: 'git+ssh://git@github.com/kexplo/electron-edge.git' },
+41 silly resolved     bugs: { url: 'http://github.com/kexplo/electron-edge/issues' },
+41 silly resolved     scripts:
+41 silly resolved      { install: 'node tools/install.js',
+41 silly resolved        test: 'node tools/test.js',
+41 silly resolved        jshint: 'node ./tools/runJsHint.js' },
+41 silly resolved     gitHead: '581fe4d6db8763d56ba782a77587be2c7786a1b9',
+41 silly resolved     _id: 'electron-edge@0.10.2-pre0',
+41 silly resolved     _shasum: 'ab13583969973d5378077b228684c507df11111e',
+41 silly resolved     _from: 'electron-edge@',
+41 silly resolved     _npmVersion: '2.8.3',
+41 silly resolved     _nodeVersion: '1.8.1',
+41 silly resolved     _npmUser: { name: 'kexplo', email: 'devk0817@gmail.com' },
+41 silly resolved     dist:
+41 silly resolved      { shasum: 'ab13583969973d5378077b228684c507df11111e',
+41 silly resolved        tarball: 'http://registry.npmjs.org/electron-edge/-/electron-edge-0.10.2-pre0.tgz' },
+41 silly resolved     maintainers: [ [Object] ],
+41 silly resolved     directories: {},
+41 silly resolved     _resolved: 'https://registry.npmjs.org/electron-edge/-/electron-edge-0.10.2-pre0.tgz',
+41 silly resolved     readme: 'ERROR: No README data found!' } ]
+42 info install electron-edge@0.10.2-pre0 into H:\projects\node-portfolio
+43 info installOne electron-edge@0.10.2-pre0
+44 verbose from cache C:\Users\gerren\AppData\Roaming\npm-cache\electron-edge\0.10.2-pre0\package\package.json
+45 info H:\projects\node-portfolio\node_modules\electron-edge unbuild
+46 verbose from cache H:\projects\node-portfolio\node_modules\electron-edge\package.json
+47 info preuninstall electron-edge@0.10.2-pre0
+48 info uninstall electron-edge@0.10.2-pre0
+49 verbose true,H:\projects\node-portfolio\node_modules,H:\projects\node-portfolio\node_modules unbuild electron-edge@0.10.2-pre0
+50 info postuninstall electron-edge@0.10.2-pre0
+51 verbose tar unpack C:\Users\gerren\AppData\Roaming\npm-cache\electron-edge\0.10.2-pre0\package.tgz
+52 silly lockFile fe93cd31-folio-node-modules-electron-edge H:\projects\node-portfolio\node_modules\electron-edge
+53 verbose lock H:\projects\node-portfolio\node_modules\electron-edge C:\Users\gerren\AppData\Roaming\npm-cache\fe93cd31-folio-node-modules-electron-edge.lock
+54 silly lockFile 72a4bae7-ron-edge-0-10-2-pre0-package-tgz C:\Users\gerren\AppData\Roaming\npm-cache\electron-edge\0.10.2-pre0\package.tgz
+55 verbose lock C:\Users\gerren\AppData\Roaming\npm-cache\electron-edge\0.10.2-pre0\package.tgz C:\Users\gerren\AppData\Roaming\npm-cache\72a4bae7-ron-edge-0-10-2-pre0-package-tgz.lock
+56 silly gunzTarPerm modes [ '755', '644' ]
+57 silly gunzTarPerm extractEntry package.json
+58 silly gunzTarPerm modified mode [ 'package.json', 438, 420 ]
+59 silly gunzTarPerm extractEntry .npmignore
+60 silly gunzTarPerm modified mode [ '.npmignore', 438, 420 ]
+61 silly gunzTarPerm extractEntry README.md
+62 silly gunzTarPerm modified mode [ 'README.md', 438, 420 ]
+63 silly gunzTarPerm extractEntry lib/double_edge.js
+64 silly gunzTarPerm modified mode [ 'lib/double_edge.js', 438, 420 ]
+65 silly gunzTarPerm extractEntry lib/edge.js
+66 silly gunzTarPerm modified mode [ 'lib/edge.js', 438, 420 ]
+67 silly gunzTarPerm extractEntry lib/native/win32/ia32/1.6.3/edge.node
+68 silly gunzTarPerm modified mode [ 'lib/native/win32/ia32/1.6.3/edge.node', 438, 420 ]
+69 silly gunzTarPerm extractEntry lib/native/win32/ia32/1.6.3/msvcp120.dll
+70 silly gunzTarPerm modified mode [ 'lib/native/win32/ia32/1.6.3/msvcp120.dll', 438, 420 ]
+71 silly gunzTarPerm extractEntry lib/native/win32/ia32/1.6.3/msvcr120.dll
+72 silly gunzTarPerm modified mode [ 'lib/native/win32/ia32/1.6.3/msvcr120.dll', 438, 420 ]
+73 silly gunzTarPerm extractEntry lib/native/win32/ia32/msvcp120.dll
+74 silly gunzTarPerm modified mode [ 'lib/native/win32/ia32/msvcp120.dll', 438, 420 ]
+75 silly gunzTarPerm extractEntry lib/native/win32/ia32/msvcr120.dll
+76 silly gunzTarPerm modified mode [ 'lib/native/win32/ia32/msvcr120.dll', 438, 420 ]
+77 silly gunzTarPerm extractEntry lib/native/win32/x64/1.6.3/edge.node
+78 silly gunzTarPerm modified mode [ 'lib/native/win32/x64/1.6.3/edge.node', 438, 420 ]
+79 silly gunzTarPerm extractEntry lib/native/win32/x64/1.6.3/msvcp120.dll
+80 silly gunzTarPerm modified mode [ 'lib/native/win32/x64/1.6.3/msvcp120.dll', 438, 420 ]
+81 silly gunzTarPerm extractEntry lib/native/win32/x64/1.6.3/msvcr120.dll
+82 silly gunzTarPerm modified mode [ 'lib/native/win32/x64/1.6.3/msvcr120.dll', 438, 420 ]
+83 silly gunzTarPerm extractEntry lib/native/win32/x64/msvcp120.dll
+84 silly gunzTarPerm modified mode [ 'lib/native/win32/x64/msvcp120.dll', 438, 420 ]
+85 silly gunzTarPerm extractEntry lib/native/win32/x64/msvcr120.dll
+86 silly gunzTarPerm modified mode [ 'lib/native/win32/x64/msvcr120.dll', 438, 420 ]
+87 silly gunzTarPerm extractEntry Dockerfile
+88 silly gunzTarPerm modified mode [ 'Dockerfile', 438, 420 ]
+89 silly gunzTarPerm extractEntry LICENSE.txt
+90 silly gunzTarPerm modified mode [ 'LICENSE.txt', 438, 420 ]
+91 silly gunzTarPerm extractEntry .gitattributes
+92 silly gunzTarPerm modified mode [ '.gitattributes', 438, 420 ]
+93 silly gunzTarPerm extractEntry binding.gyp
+94 silly gunzTarPerm modified mode [ 'binding.gyp', 438, 420 ]
+95 silly gunzTarPerm extractEntry .jshintrc
+96 silly gunzTarPerm modified mode [ '.jshintrc', 438, 420 ]
+97 silly gunzTarPerm extractEntry test/101_edge_func.js
+98 silly gunzTarPerm modified mode [ 'test/101_edge_func.js', 438, 420 ]
+99 silly gunzTarPerm extractEntry test/103_net2node.js
+100 silly gunzTarPerm modified mode [ 'test/103_net2node.js', 438, 420 ]
+101 silly gunzTarPerm extractEntry test/104_csx.js
+102 silly gunzTarPerm modified mode [ 'test/104_csx.js', 438, 420 ]
+103 silly gunzTarPerm extractEntry test/105_node2net_sync.js
+104 silly gunzTarPerm modified mode [ 'test/105_node2net_sync.js', 438, 420 ]
+105 silly gunzTarPerm extractEntry test/201_patterns.js
+106 silly gunzTarPerm modified mode [ 'test/201_patterns.js', 438, 420 ]
+107 silly gunzTarPerm extractEntry test/102_node2net.js
+108 silly gunzTarPerm modified mode [ 'test/102_node2net.js', 438, 420 ]
+109 silly gunzTarPerm extractEntry test/build.bat
+110 silly gunzTarPerm modified mode [ 'test/build.bat', 438, 420 ]
+111 silly gunzTarPerm extractEntry test/tests.cs
+112 silly gunzTarPerm modified mode [ 'test/tests.cs', 438, 420 ]
+113 silly gunzTarPerm extractEntry test/hello_class.cs
+114 silly gunzTarPerm modified mode [ 'test/hello_class.cs', 438, 420 ]
+115 silly gunzTarPerm extractEntry test/hello_class.csx
+116 silly gunzTarPerm modified mode [ 'test/hello_class.csx', 438, 420 ]
+117 silly gunzTarPerm extractEntry test/hello_lambda.csx
+118 silly gunzTarPerm modified mode [ 'test/hello_lambda.csx', 438, 420 ]
+119 silly gunzTarPerm extractEntry test/test.bat
+120 silly gunzTarPerm modified mode [ 'test/test.bat', 438, 420 ]
+121 silly gunzTarPerm extractEntry test/testall.bat
+122 silly gunzTarPerm modified mode [ 'test/testall.bat', 438, 420 ]
+123 silly gunzTarPerm extractEntry test/double/.npmignore
+124 silly gunzTarPerm modified mode [ 'test/double/.npmignore', 438, 420 ]
+125 silly gunzTarPerm extractEntry test/double/double_stress/App.config
+126 silly gunzTarPerm modified mode [ 'test/double/double_stress/App.config', 438, 420 ]
+127 silly gunzTarPerm extractEntry test/double/double_stress/Program.cs
+128 silly gunzTarPerm modified mode [ 'test/double/double_stress/Program.cs', 438, 420 ]
+129 silly gunzTarPerm extractEntry test/double/double_stress/Properties/AssemblyInfo.cs
+130 silly gunzTarPerm modified mode [ 'test/double/double_stress/Properties/AssemblyInfo.cs',
+130 silly gunzTarPerm   438,
+130 silly gunzTarPerm   420 ]
+131 silly gunzTarPerm extractEntry test/double/double_stress/double_stress.csproj
+132 silly gunzTarPerm modified mode [ 'test/double/double_stress/double_stress.csproj', 438, 420 ]
+133 silly gunzTarPerm extractEntry test/double/double_stress/double_stress.sln
+134 silly gunzTarPerm modified mode [ 'test/double/double_stress/double_stress.sln', 438, 420 ]
+135 silly gunzTarPerm extractEntry test/double/double_stress/packages.config
+136 silly gunzTarPerm modified mode [ 'test/double/double_stress/packages.config', 438, 420 ]
+137 silly gunzTarPerm extractEntry test/double/double_test/DoubleEdge.cs
+138 silly gunzTarPerm modified mode [ 'test/double/double_test/DoubleEdge.cs', 438, 420 ]
+139 silly gunzTarPerm extractEntry test/double/double_test/Properties/AssemblyInfo.cs
+140 silly gunzTarPerm modified mode [ 'test/double/double_test/Properties/AssemblyInfo.cs',
+140 silly gunzTarPerm   438,
+140 silly gunzTarPerm   420 ]
+141 silly gunzTarPerm extractEntry test/double/double_test/double_test.csproj
+142 silly gunzTarPerm modified mode [ 'test/double/double_test/double_test.csproj', 438, 420 ]
+143 silly gunzTarPerm extractEntry test/double/double_test/double_test.sln
+144 silly gunzTarPerm modified mode [ 'test/double/double_test/double_test.sln', 438, 420 ]
+145 silly gunzTarPerm extractEntry test/double/double_test/packages.config
+146 silly gunzTarPerm modified mode [ 'test/double/double_test/packages.config', 438, 420 ]
+147 silly gunzTarPerm extractEntry .travis.yml
+148 silly gunzTarPerm modified mode [ '.travis.yml', 438, 420 ]
+149 silly gunzTarPerm extractEntry performance/.npmignore
+150 silly gunzTarPerm modified mode [ 'performance/.npmignore', 438, 420 ]
+151 silly gunzTarPerm extractEntry performance/latency.js
+152 silly gunzTarPerm modified mode [ 'performance/latency.js', 438, 420 ]
+153 silly gunzTarPerm extractEntry performance/marshal_clr2v8.js
+154 silly gunzTarPerm modified mode [ 'performance/marshal_clr2v8.js', 438, 420 ]
+155 silly gunzTarPerm extractEntry performance/BookService/App.config
+156 silly gunzTarPerm modified mode [ 'performance/BookService/App.config', 438, 420 ]
+157 silly gunzTarPerm extractEntry performance/BookService/BookService.csproj
+158 silly gunzTarPerm modified mode [ 'performance/BookService/BookService.csproj', 438, 420 ]
+159 silly gunzTarPerm extractEntry performance/BookService/BookService.sln
+160 silly gunzTarPerm modified mode [ 'performance/BookService/BookService.sln', 438, 420 ]
+161 silly gunzTarPerm extractEntry performance/BookService/Program.cs
+162 silly gunzTarPerm modified mode [ 'performance/BookService/Program.cs', 438, 420 ]
+163 silly gunzTarPerm extractEntry performance/BookService/Properties/AssemblyInfo.cs
+164 silly gunzTarPerm modified mode [ 'performance/BookService/Properties/AssemblyInfo.cs',
+164 silly gunzTarPerm   438,
+164 silly gunzTarPerm   420 ]
+165 silly gunzTarPerm extractEntry performance/BookService/compile.sh
+166 silly gunzTarPerm modified mode [ 'performance/BookService/compile.sh', 438, 420 ]
+167 silly gunzTarPerm extractEntry performance/BookService/packages.config
+168 silly gunzTarPerm modified mode [ 'performance/BookService/packages.config', 438, 420 ]
+169 silly gunzTarPerm extractEntry samples/101_hello_lambda.js
+170 silly gunzTarPerm modified mode [ 'samples/101_hello_lambda.js', 438, 420 ]
+171 silly gunzTarPerm extractEntry samples/108_lambda.js
+172 silly gunzTarPerm modified mode [ 'samples/108_lambda.js', 438, 420 ]
+173 silly gunzTarPerm extractEntry samples/109_sync.js
+174 silly gunzTarPerm modified mode [ 'samples/109_sync.js', 438, 420 ]
+175 silly gunzTarPerm extractEntry samples/110_clr_instance.js
+176 silly gunzTarPerm modified mode [ 'samples/110_clr_instance.js', 438, 420 ]
+177 silly gunzTarPerm extractEntry samples/111_clr_listener.js
+178 silly gunzTarPerm modified mode [ 'samples/111_clr_listener.js', 438, 420 ]
+179 silly gunzTarPerm extractEntry samples/108_func.js
+180 silly gunzTarPerm modified mode [ 'samples/108_func.js', 438, 420 ]
+181 silly gunzTarPerm extractEntry samples/210_windows_authentication.js
+182 silly gunzTarPerm modified mode [ 'samples/210_windows_authentication.js', 438, 420 ]
+183 silly gunzTarPerm extractEntry samples/102_hello_function.js
+184 silly gunzTarPerm modified mode [ 'samples/102_hello_function.js', 438, 420 ]
+185 silly gunzTarPerm extractEntry samples/203_x509store.js
+186 silly gunzTarPerm modified mode [ 'samples/203_x509store.js', 438, 420 ]
+187 silly gunzTarPerm extractEntry samples/204_event_log.js
+188 silly gunzTarPerm modified mode [ 'samples/204_event_log.js', 438, 420 ]
+189 silly gunzTarPerm extractEntry samples/209_websocket.js
+190 silly gunzTarPerm modified mode [ 'samples/209_websocket.js', 438, 420 ]
+191 silly gunzTarPerm extractEntry samples/107_marshal_clr2v8.js
+192 silly gunzTarPerm modified mode [ 'samples/107_marshal_clr2v8.js', 438, 420 ]
+193 silly gunzTarPerm extractEntry samples/205_soap.js
+194 silly gunzTarPerm modified mode [ 'samples/205_soap.js', 438, 420 ]
+195 silly gunzTarPerm extractEntry samples/106_marshal_v82clr.js
+196 silly gunzTarPerm modified mode [ 'samples/106_marshal_v82clr.js', 438, 420 ]
+197 silly gunzTarPerm extractEntry samples/206_registry_read.js
+198 silly gunzTarPerm modified mode [ 'samples/206_registry_read.js', 438, 420 ]
+199 silly gunzTarPerm extractEntry samples/105_add7_dll.js
+200 silly gunzTarPerm modified mode [ 'samples/105_add7_dll.js', 438, 420 ]
+201 silly gunzTarPerm extractEntry samples/206_registry_write.js
+202 silly gunzTarPerm modified mode [ 'samples/206_registry_write.js', 438, 420 ]
+203 silly gunzTarPerm extractEntry samples/104_add7_class.js
+204 silly gunzTarPerm modified mode [ 'samples/104_add7_class.js', 438, 420 ]
+205 silly gunzTarPerm extractEntry samples/207_unzip.js
+206 silly gunzTarPerm modified mode [ 'samples/207_unzip.js', 438, 420 ]
+207 silly gunzTarPerm extractEntry samples/103_hello_file.js
+208 silly gunzTarPerm modified mode [ 'samples/103_hello_file.js', 438, 420 ]
+209 silly gunzTarPerm extractEntry samples/207_zip.js
+210 silly gunzTarPerm modified mode [ 'samples/207_zip.js', 438, 420 ]
+211 silly gunzTarPerm extractEntry samples/301_cspyfsps.js
+212 silly gunzTarPerm modified mode [ 'samples/301_cspyfsps.js', 438, 420 ]
+213 silly gunzTarPerm extractEntry samples/208_convertImage.js
+214 silly gunzTarPerm modified mode [ 'samples/208_convertImage.js', 438, 420 ]
+215 silly gunzTarPerm extractEntry samples/201_worker.js
+216 silly gunzTarPerm modified mode [ 'samples/201_worker.js', 438, 420 ]
+217 silly gunzTarPerm extractEntry samples/202_sql.js
+218 silly gunzTarPerm modified mode [ 'samples/202_sql.js', 438, 420 ]
+219 silly gunzTarPerm extractEntry samples/205_soap.csx
+220 silly gunzTarPerm modified mode [ 'samples/205_soap.csx', 438, 420 ]
+221 silly gunzTarPerm extractEntry samples/202_sql.csx
+222 silly gunzTarPerm modified mode [ 'samples/202_sql.csx', 438, 420 ]
+223 silly gunzTarPerm extractEntry samples/103_hello_file.csx
+224 silly gunzTarPerm modified mode [ 'samples/103_hello_file.csx', 438, 420 ]
+225 silly gunzTarPerm extractEntry samples/edge.png
+226 silly gunzTarPerm modified mode [ 'samples/edge.png', 438, 420 ]
+227 silly gunzTarPerm extractEntry samples/readme.txt
+228 silly gunzTarPerm modified mode [ 'samples/readme.txt', 438, 420 ]
+229 silly gunzTarPerm extractEntry src/common/edge_common.h
+230 silly gunzTarPerm modified mode [ 'src/common/edge_common.h', 438, 420 ]
+231 silly gunzTarPerm extractEntry src/common/v8synchronizationcontext.cpp
+232 silly gunzTarPerm modified mode [ 'src/common/v8synchronizationcontext.cpp', 438, 420 ]
+233 silly gunzTarPerm extractEntry src/dotnet/clractioncontext.cpp
+234 silly gunzTarPerm modified mode [ 'src/dotnet/clractioncontext.cpp', 438, 420 ]
+235 silly gunzTarPerm extractEntry src/dotnet/clrfunc.cpp
+236 silly gunzTarPerm modified mode [ 'src/dotnet/clrfunc.cpp', 438, 420 ]
+237 silly gunzTarPerm extractEntry src/dotnet/clrfuncinvokecontext.cpp
+238 silly gunzTarPerm modified mode [ 'src/dotnet/clrfuncinvokecontext.cpp', 438, 420 ]
+239 silly gunzTarPerm extractEntry src/dotnet/clrfuncreflectionwrap.cpp
+240 silly gunzTarPerm modified mode [ 'src/dotnet/clrfuncreflectionwrap.cpp', 438, 420 ]
+241 silly gunzTarPerm extractEntry src/dotnet/edge.cpp
+242 silly gunzTarPerm modified mode [ 'src/dotnet/edge.cpp', 438, 420 ]
+243 silly gunzTarPerm extractEntry src/dotnet/edge.h
+244 silly gunzTarPerm modified mode [ 'src/dotnet/edge.h', 438, 420 ]
+245 silly gunzTarPerm extractEntry src/dotnet/nodejsfunc.cpp
+246 silly gunzTarPerm modified mode [ 'src/dotnet/nodejsfunc.cpp', 438, 420 ]
+247 silly gunzTarPerm extractEntry src/dotnet/nodejsfuncinvokecontext.cpp
+248 silly gunzTarPerm modified mode [ 'src/dotnet/nodejsfuncinvokecontext.cpp', 438, 420 ]
+249 silly gunzTarPerm extractEntry src/dotnet/persistentdisposecontext.cpp
+250 silly gunzTarPerm modified mode [ 'src/dotnet/persistentdisposecontext.cpp', 438, 420 ]
+251 silly gunzTarPerm extractEntry src/dotnet/utils.cpp
+252 silly gunzTarPerm modified mode [ 'src/dotnet/utils.cpp', 438, 420 ]
+253 silly gunzTarPerm extractEntry src/double/dotnet/EdgeJs.cs
+254 silly gunzTarPerm modified mode [ 'src/double/dotnet/EdgeJs.cs', 438, 420 ]
+255 silly gunzTarPerm extractEntry src/mono/monoembedding.cpp
+256 silly gunzTarPerm modified mode [ 'src/mono/monoembedding.cpp', 438, 420 ]
+257 silly gunzTarPerm extractEntry src/mono/clractioncontext.cpp
+258 silly gunzTarPerm modified mode [ 'src/mono/clractioncontext.cpp', 438, 420 ]
+259 silly gunzTarPerm extractEntry src/mono/clrfuncinvokecontext.cpp
+260 silly gunzTarPerm modified mode [ 'src/mono/clrfuncinvokecontext.cpp', 438, 420 ]
+261 silly gunzTarPerm extractEntry src/mono/clrfuncinvokecontext.cs
+262 silly gunzTarPerm modified mode [ 'src/mono/clrfuncinvokecontext.cs', 438, 420 ]
+263 silly gunzTarPerm extractEntry src/mono/clrfuncreflectionwrap.cs
+264 silly gunzTarPerm modified mode [ 'src/mono/clrfuncreflectionwrap.cs', 438, 420 ]
+265 silly gunzTarPerm extractEntry src/mono/dictionary.cpp
+266 silly gunzTarPerm modified mode [ 'src/mono/dictionary.cpp', 438, 420 ]
+267 silly gunzTarPerm extractEntry src/mono/edge.cpp
+268 silly gunzTarPerm modified mode [ 'src/mono/edge.cpp', 438, 420 ]
+269 silly gunzTarPerm extractEntry src/mono/edge.h
+270 silly gunzTarPerm modified mode [ 'src/mono/edge.h', 438, 420 ]
+271 silly gunzTarPerm extractEntry src/mono/clrfunc.cpp
+272 silly gunzTarPerm modified mode [ 'src/mono/clrfunc.cpp', 438, 420 ]
+273 silly gunzTarPerm extractEntry src/mono/monoembedding.cs
+274 silly gunzTarPerm modified mode [ 'src/mono/monoembedding.cs', 438, 420 ]
+275 silly gunzTarPerm extractEntry src/mono/nodejsfunc.cpp
+276 silly gunzTarPerm modified mode [ 'src/mono/nodejsfunc.cpp', 438, 420 ]
+277 silly gunzTarPerm extractEntry src/mono/nodejsfunc.cs
+278 silly gunzTarPerm modified mode [ 'src/mono/nodejsfunc.cs', 438, 420 ]
+279 silly gunzTarPerm extractEntry src/mono/nodejsfuncinvokecontext.cpp
+280 silly gunzTarPerm modified mode [ 'src/mono/nodejsfuncinvokecontext.cpp', 438, 420 ]
+281 silly gunzTarPerm extractEntry src/mono/nodejsfuncinvokecontext.cs
+282 silly gunzTarPerm modified mode [ 'src/mono/nodejsfuncinvokecontext.cs', 438, 420 ]
+283 silly gunzTarPerm extractEntry src/mono/task.cpp
+284 silly gunzTarPerm modified mode [ 'src/mono/task.cpp', 438, 420 ]
+285 silly gunzTarPerm extractEntry src/mono/utils.cpp
+286 silly gunzTarPerm modified mode [ 'src/mono/utils.cpp', 438, 420 ]
+287 silly gunzTarPerm extractEntry stress/test.js
+288 silly gunzTarPerm modified mode [ 'stress/test.js', 438, 420 ]
+289 silly gunzTarPerm extractEntry tools/install.js
+290 silly gunzTarPerm modified mode [ 'tools/install.js', 438, 420 ]
+291 silly gunzTarPerm extractEntry tools/checkplatform.js
+292 silly gunzTarPerm modified mode [ 'tools/checkplatform.js', 438, 420 ]
+293 silly gunzTarPerm extractEntry tools/download.js
+294 silly gunzTarPerm modified mode [ 'tools/download.js', 438, 420 ]
+295 silly gunzTarPerm extractEntry tools/runJsHint.js
+296 silly gunzTarPerm modified mode [ 'tools/runJsHint.js', 438, 420 ]
+297 silly gunzTarPerm extractEntry tools/test.js
+298 silly gunzTarPerm modified mode [ 'tools/test.js', 438, 420 ]
+299 silly gunzTarPerm extractEntry tools/debian_wheezy_clean_install.sh
+300 silly gunzTarPerm modified mode [ 'tools/debian_wheezy_clean_install.sh', 438, 420 ]
+301 silly gunzTarPerm extractEntry tools/download.cs
+302 silly gunzTarPerm modified mode [ 'tools/download.cs', 438, 420 ]
+303 silly gunzTarPerm extractEntry tools/build_double.bat
+304 silly gunzTarPerm modified mode [ 'tools/build_double.bat', 438, 420 ]
+305 silly gunzTarPerm extractEntry tools/build.bat
+306 silly gunzTarPerm modified mode [ 'tools/build.bat', 438, 420 ]
+307 silly gunzTarPerm extractEntry tools/mono64.rb
+308 silly gunzTarPerm modified mode [ 'tools/mono64.rb', 438, 420 ]
+309 silly gunzTarPerm extractEntry tools/nuget/edge.nuspec
+310 silly gunzTarPerm modified mode [ 'tools/nuget/edge.nuspec', 438, 420 ]
+311 silly gunzTarPerm extractEntry tools/nuget/install.ps1
+312 silly gunzTarPerm modified mode [ 'tools/nuget/install.ps1', 438, 420 ]
+313 silly gunzTarPerm extractEntry tools/repl.cs
+314 silly gunzTarPerm modified mode [ 'tools/repl.cs', 438, 420 ]
+315 silly gunzTarPerm extractEntry tools/buildall.bat
+316 silly gunzTarPerm modified mode [ 'tools/buildall.bat', 438, 420 ]
+317 silly gunzTarPerm extractEntry tools/Microsoft.Portable.Common.targets
+318 silly gunzTarPerm modified mode [ 'tools/Microsoft.Portable.Common.targets', 438, 420 ]
+319 silly gunzTarPerm extractEntry tools/ubuntu_12.04_clean_install.sh
+320 silly gunzTarPerm modified mode [ 'tools/ubuntu_12.04_clean_install.sh', 438, 420 ]
+321 silly gunzTarPerm extractEntry tools/unzip.cs
+322 silly gunzTarPerm modified mode [ 'tools/unzip.cs', 438, 420 ]
+323 verbose read json H:\projects\node-portfolio\node_modules\electron-edge\package.json
+324 silly lockFile fe93cd31-folio-node-modules-electron-edge H:\projects\node-portfolio\node_modules\electron-edge
+325 silly lockFile fe93cd31-folio-node-modules-electron-edge H:\projects\node-portfolio\node_modules\electron-edge
+326 silly lockFile 72a4bae7-ron-edge-0-10-2-pre0-package-tgz C:\Users\gerren\AppData\Roaming\npm-cache\electron-edge\0.10.2-pre0\package.tgz
+327 silly lockFile 72a4bae7-ron-edge-0-10-2-pre0-package-tgz C:\Users\gerren\AppData\Roaming\npm-cache\electron-edge\0.10.2-pre0\package.tgz
+328 info preinstall electron-edge@0.10.2-pre0
+329 verbose from cache H:\projects\node-portfolio\node_modules\electron-edge\package.json
+330 verbose readDependencies using package.json deps
+331 verbose from cache H:\projects\node-portfolio\node_modules\electron-edge\package.json
+332 verbose readDependencies using package.json deps
+333 verbose cache add [ 'edge-cs@0.2.7', null ]
+334 verbose cache add name=undefined spec="edge-cs@0.2.7" args=["edge-cs@0.2.7",null]
+335 verbose parsed url { protocol: null,
+335 verbose parsed url   slashes: null,
+335 verbose parsed url   auth: null,
+335 verbose parsed url   host: null,
+335 verbose parsed url   port: null,
+335 verbose parsed url   hostname: null,
+335 verbose parsed url   hash: null,
+335 verbose parsed url   search: null,
+335 verbose parsed url   query: null,
+335 verbose parsed url   pathname: 'edge-cs@0.2.7',
+335 verbose parsed url   path: 'edge-cs@0.2.7',
+335 verbose parsed url   href: 'edge-cs@0.2.7' }
+336 verbose cache add name="edge-cs" spec="0.2.7" args=["edge-cs","0.2.7"]
+337 verbose parsed url { protocol: null,
+337 verbose parsed url   slashes: null,
+337 verbose parsed url   auth: null,
+337 verbose parsed url   host: null,
+337 verbose parsed url   port: null,
+337 verbose parsed url   hostname: null,
+337 verbose parsed url   hash: null,
+337 verbose parsed url   search: null,
+337 verbose parsed url   query: null,
+337 verbose parsed url   pathname: '0.2.7',
+337 verbose parsed url   path: '0.2.7',
+337 verbose parsed url   href: '0.2.7' }
+338 verbose addNamed [ 'edge-cs', '0.2.7' ]
+339 verbose addNamed [ '0.2.7', '0.2.7' ]
+340 silly lockFile aa9fc4dc-edge-cs-0-2-7 edge-cs@0.2.7
+341 verbose lock edge-cs@0.2.7 C:\Users\gerren\AppData\Roaming\npm-cache\aa9fc4dc-edge-cs-0-2-7.lock
+342 verbose cache add [ 'nan@^1.6.2', null ]
+343 verbose cache add name=undefined spec="nan@^1.6.2" args=["nan@^1.6.2",null]
+344 verbose parsed url { protocol: null,
+344 verbose parsed url   slashes: null,
+344 verbose parsed url   auth: null,
+344 verbose parsed url   host: null,
+344 verbose parsed url   port: null,
+344 verbose parsed url   hostname: null,
+344 verbose parsed url   hash: null,
+344 verbose parsed url   search: null,
+344 verbose parsed url   query: null,
+344 verbose parsed url   pathname: 'nan@^1.6.2',
+344 verbose parsed url   path: 'nan@^1.6.2',
+344 verbose parsed url   href: 'nan@^1.6.2' }
+345 verbose cache add name="nan" spec="^1.6.2" args=["nan","^1.6.2"]
+346 verbose parsed url { protocol: null,
+346 verbose parsed url   slashes: null,
+346 verbose parsed url   auth: null,
+346 verbose parsed url   host: null,
+346 verbose parsed url   port: null,
+346 verbose parsed url   hostname: null,
+346 verbose parsed url   hash: null,
+346 verbose parsed url   search: null,
+346 verbose parsed url   query: null,
+346 verbose parsed url   pathname: '^1.6.2',
+346 verbose parsed url   path: '^1.6.2',
+346 verbose parsed url   href: '^1.6.2' }
+347 verbose addNamed [ 'nan', '^1.6.2' ]
+348 verbose addNamed [ null, null ]
+349 silly lockFile 533577ce-nan-1-6-2 nan@^1.6.2
+350 verbose lock nan@^1.6.2 C:\Users\gerren\AppData\Roaming\npm-cache\533577ce-nan-1-6-2.lock
+351 verbose url raw edge-cs/0.2.7
+352 verbose url resolving [ 'https://registry.npmjs.org/', './edge-cs/0.2.7' ]
+353 verbose url resolved https://registry.npmjs.org/edge-cs/0.2.7
+354 info trying registry request attempt 1 at 02:51:12
+355 http GET https://registry.npmjs.org/edge-cs/0.2.7
+356 info addNameTag [ 'nan', '^1.6.2' ]
+357 verbose url raw nan
+358 verbose url resolving [ 'https://registry.npmjs.org/', './nan' ]
+359 verbose url resolved https://registry.npmjs.org/nan
+360 info trying registry request attempt 1 at 02:51:12
+361 http GET https://registry.npmjs.org/nan
+362 http 200 https://registry.npmjs.org/nan
+363 silly registry.get cb [ 200,
+363 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+363 silly registry.get     etag: '"9T2TEINHQE1CYR42PWQNCEY3X"',
+363 silly registry.get     'content-type': 'application/json',
+363 silly registry.get     'cache-control': 'max-age=60',
+363 silly registry.get     'content-length': '109608',
+363 silly registry.get     'accept-ranges': 'bytes',
+363 silly registry.get     date: 'Fri, 24 Jul 2015 06:50:27 GMT',
+363 silly registry.get     via: '1.1 varnish',
+363 silly registry.get     age: '1',
+363 silly registry.get     connection: 'keep-alive',
+363 silly registry.get     'x-served-by': 'cache-jfk1029-JFK',
+363 silly registry.get     'x-cache': 'HIT',
+363 silly registry.get     'x-cache-hits': '1',
+363 silly registry.get     'x-timer': 'S1437720627.145499,VS0,VE0',
+363 silly registry.get     vary: 'Accept' } ]
+364 silly lockFile 533577ce-nan-1-6-2 nan@^1.6.2
+365 silly lockFile 533577ce-nan-1-6-2 nan@^1.6.2
+366 verbose about to build H:\projects\node-portfolio\node_modules\electron-edge
+367 info H:\projects\node-portfolio\node_modules\electron-edge unbuild
+368 verbose from cache H:\projects\node-portfolio\node_modules\electron-edge\package.json
+369 info preuninstall electron-edge@0.10.2-pre0
+370 info uninstall electron-edge@0.10.2-pre0
+371 verbose true,H:\projects\node-portfolio\node_modules,H:\projects\node-portfolio\node_modules unbuild electron-edge@0.10.2-pre0
+372 info postuninstall electron-edge@0.10.2-pre0
+373 error Error: No compatible version found: nan@'^1.6.2'
+373 error Valid install targets:
+373 error ["0.3.0-wip","0.3.0-wip2","0.3.0","0.3.1","0.3.2","0.4.0","0.4.1","0.4.2","0.4.3","0.4.4","0.5.0","0.5.1","0.5.2","0.6.0","0.7.0","0.7.1","0.8.0","1.0.0","1.1.0","1.1.1","1.1.2","1.2.0","1.3.0","1.4.0","1.4.1","1.5.0","1.4.2","1.4.3","1.5.1","1.5.2","1.6.0","1.5.3","1.6.1","1.6.2","1.7.0","1.8.0","1.8.1","1.8.2","1.8.3","1.8.4"]
+373 error     at installTargetsError (C:\nvmw\v0.10.2\node_modules\npm\lib\cache.js:684:10)
+373 error     at C:\nvmw\v0.10.2\node_modules\npm\lib\cache.js:606:10
+373 error     at saved (C:\nvmw\v0.10.2\node_modules\npm\node_modules\npm-registry-client\lib\get.js:138:7)
+373 error     at Object.oncomplete (fs.js:107:15)
+374 error If you need help, you may report this log at:
+374 error     <http://github.com/isaacs/npm/issues>
+374 error or email it to:
+374 error     <npm-@googlegroups.com>
+375 error System Windows_NT 6.1.7601
+376 error command "C:\\nvmw\\v0.10.2\\\\node.exe" "C:\\nvmw\\v0.10.2\\node_modules\\npm\\bin\\npm-cli.js" "install" "electron-edge"
+377 error cwd H:\projects\node-portfolio
+378 error node -v v0.10.2
+379 error npm -v 1.2.15
+380 verbose exit [ 1, true ]

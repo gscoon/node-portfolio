@@ -3,12 +3,7 @@ var BrowserWindow = require('browser-window');  // Module to create native brows
 var excel = require('./inc/excel');  // excel module
 
 
-/*
-excel.call(3, function(error, result){
-    console.log(result);
-    console.log(error);
-});
-*/
+
 // Report crashes to our server.
 require('crash-reporter').start();
 
@@ -43,5 +38,10 @@ app.on('ready', function() {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
+  });
+
+  excel.call(3, function(error, result){
+      console.log(result);
+      console.log(error);
   });
 });
