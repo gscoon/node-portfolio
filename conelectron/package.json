@@ -1,9 +1,0 @@
-{
-  "name": "edge-test-app",
-  "version": "0.1.0",
-  "main": "main.js",
-  "devDependencies": {
-    "electron-prebuilt": "^0.30.0",
-    "electron-rebuild": "^0.2.5"
-  }
-}

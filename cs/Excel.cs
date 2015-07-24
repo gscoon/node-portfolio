@@ -30,8 +30,7 @@ namespace GSEXCEL
             // close excel and dispose reference
             //excelApplication.Quit();
             //excelApplication.Dispose();
-            //return Helper.AddSeven(v);
-            return XlCalculation.xlCalculationManual;
+            return Helper.AddSeven(v);
 
         }
     }
