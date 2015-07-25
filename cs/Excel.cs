@@ -33,7 +33,7 @@ namespace GSEXCEL
             this.excelApplication.Visible = true;
             this.workBook = excelApplication.Workbooks.Add();
             this.isAppSet = true;
-            return null;
+            return true;
         }
 
         public object PopulateSheet(IDictionary<string, object> parameters){
