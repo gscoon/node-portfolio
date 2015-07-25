@@ -1,0 +1,47 @@
+html, body
+{
+    font-family:'Open Sans';
+    background-color:#333;
+    padding:0;
+    margin:0;
+    color:#fff;
+}
+
+#x
+{
+    cursor:pointer;
+    display:block;
+    position:absolute;
+    right:5px;
+    top:5px;
+    width:35px;
+    height:20px;
+    line-height:18px;
+    background-color:#611f1f;
+    text-align:center;
+    vertical-align: middle;
+}
+
+#menu_bar
+{
+    height:30px;
+    background-color:#222;
+    position:relative;
+    -webkit-app-region: drag
+}
+
+#page_title
+{
+    text-align: center;
+    line-height:30px;
+    vertical-align: center;
+}
+
+.button {
+  -webkit-app-region: no-drag;
+}
+
+#outer
+{
+    padding:10px;
+}
