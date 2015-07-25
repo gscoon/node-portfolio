@@ -1,9 +1,6 @@
 var edge = require('electron-edge2');
 var baseDir = './';
 var excelClass = function(){
-    this.simpleMath = function(i, func){
-        this.call(i, func);
-    }
 
     this.call = edge.func({
         source: baseDir + "cs/Excel.cs",

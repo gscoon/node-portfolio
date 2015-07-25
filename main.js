@@ -1,6 +1,5 @@
 var app = require('app');  // Module to control application life.
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
-var excel = require('./inc/excel');  // excel module
 
 // Report crashes to our server.
 require('crash-reporter').start();
@@ -27,11 +26,11 @@ app.on('ready', function() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
       title:"Portfolio GS",
-      width: 400,
-      height: 600,
-      transparent: true,
       frame:false,
-      "auto-hide-menu-bar":true
+      "use-content-size":true,
+      "auto-hide-menu-bar":true,
+      width:400,
+      height:500
     });
 
 
@@ -55,7 +54,3 @@ app.on('ready', function() {
 //       console.log(error);
 //   });
 });
-
-app.notif = function(m){
-    console.log(m);
-}

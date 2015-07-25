@@ -14,24 +14,34 @@ namespace GSEXCEL
     public class ExcelClass
     {
         private int uniqueKey = 0;
+        private bool isAppSet = false;
+        private Excel.Application excelApplication;
+        private Excel.Workbook workBook;
 
         public async Task<object> Invoke(object input) {
-            int v = (int)input;
-            Excel.Application excelApplication = new Excel.Application();
-            excelApplication.Visible = true;
+            var parameters = (IDictionary<string, object>)input;
+            var functionName = (string)parameters["fn"];
 
-            Excel.Workbook workBook = excelApplication.Workbooks.Add();
-            excelApplication.Calculation = XlCalculation.xlCalculationManual; // have to open workbook before setting calculation
-            Excel.Worksheet workSheet = (Excel.Worksheet)workBook.Worksheets[1];
+            return this.GetType().InvokeMember(functionName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.InvokeMethod, null, this, new object[] {parameters});
+
+            //excelApplication.Calculation = XlCalculation.xlCalculationManual; // have to open workbook before setting calculation
+
+        }
+
+        public object SetExcelObject(IDictionary<string, object> parameters){
+            this.excelApplication = new Excel.Application();
+            this.excelApplication.Visible = true;
+            this.workBook = excelApplication.Workbooks.Add();
+            this.isAppSet = true;
+            return null;
+        }
+
+        public object PopulateSheet(IDictionary<string, object> parameters){
+            Excel.Worksheet workSheet = (Excel.Worksheet)this.workBook.Worksheets[1];
             workSheet.Range("A1").Value = "1";
             workSheet.Range("A2").Value = "2";
             workSheet.Range("A3").Value = "=a1+a2";
-            //workBook.SaveAs("Example01.xlsx");
-            // close excel and dispose reference
-            //excelApplication.Quit();
-            //excelApplication.Dispose();
-            return Helper.AddSeven(v);
-
+            return null;
         }
     }
 

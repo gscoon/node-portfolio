@@ -4,7 +4,7 @@ html, body
     background-color:#333;
     padding:0;
     margin:0;
-    color:#fff;
+    color:#333;
 }
 
 #x
@@ -13,27 +13,36 @@ html, body
     display:block;
     position:absolute;
     right:5px;
-    top:5px;
-    width:35px;
-    height:20px;
-    line-height:18px;
-    background-color:#611f1f;
+    top:50%;
+    margin-top:-13px;
+    width:40px;
+    height:25px;
+    line-height:23px;
+    background-color:#772b2b;
     text-align:center;
     vertical-align: middle;
 }
 
+#x:hover
+{
+    background-color:#a64444;
+}
+
 #menu_bar
 {
-    height:30px;
-    background-color:#222;
+    height:35px;
+    background-color:#333;
     position:relative;
-    -webkit-app-region: drag
+    -webkit-app-region: drag;
+    font-size:14px;
+    position:relative;
+    color:#fff;
 }
 
 #page_title
 {
     text-align: center;
-    line-height:30px;
+    line-height:35px;
     vertical-align: center;
 }
 
@@ -43,5 +52,45 @@ html, body
 
 #outer
 {
-    padding:10px;
+    padding:10px 5px;
+    font-size: 13px;
+    background-color:#fff;
+    height:440px;
+    margin:0 3px;
+}
+
+/* templates */
+
+.template_menu_a
+{
+    display:block;
+    text-decoration: none;
+    padding:10px 5px;
+    margin:0;
+    border:#efefef solid;
+    border-width:0 0 1px;
+}
+
+.template_menu_a:hover
+{
+    background-color:#efefef;
+    border-color:#ccc;
+}
+
+.template_menu_a span.template_menu_title
+{
+    display:block;
+    font-weight:bold;
+    color:#222;
+}
+
+.template_menu_a:hover span.template_menu_title
+{
+    color:#4e77b4;
+}
+
+.template_menu_a span.template_menu_description
+{
+    display:block;
+    color:#555;
 }

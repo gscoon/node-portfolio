@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Edge.JS and Electron</title>
+        <title>Scoon</title>
         <script type="text/javascript">
             window.$ = require('jquery');
-            var site = require('./js/site.js');
+            site = require('./js/site.js');
             $(function(){
-                site.ready();
+                site.setUp();
             });
         </script>
         <script src="./js/site.js" type="text/javascript"></script>
@@ -17,6 +17,23 @@
             <div id="page_title">Scoon</div>
             <a id="x" class="button">x</a>
         </div>
-        <div id="outer">Pursuit of happinessss<div>
+        <div id="outer">
+            <a class="template_menu_a" href="#">
+                <span class="template_menu_title">2015 Reporting Template</span>
+                <span class="template_menu_description">Reporting Template sent to MFIs each month</span>
+            </a>
+            <a class="template_menu_a" href="#">
+                <span class="template_menu_title">2015 Reporting Template</span>
+                <span class="template_menu_description">Reporting Template sent to MFIs each month</span>
+            </a>
+            <a class="template_menu_a" href="#">
+                <span class="template_menu_title">2015 Reporting Template</span>
+                <span class="template_menu_description">Reporting Template sent to MFIs each month</span>
+            </a>
+            <a class="template_menu_a" href="#">
+                <span class="template_menu_title">2015 Reporting Template</span>
+                <span class="template_menu_description">Reporting Template sent to MFIs each month</span>
+            </a>
+        <div>
     </body>
 </html>
