@@ -50,42 +50,6 @@ var dbClass = function(){
 
     }
 
-    // Instagram stuff
-    this.addInstagramData = function(iArray, callback){
-        var ts = new Date().formatMYSQL();
-        var insertStr = '';
-        iArray.forEach(function(insta){
-            if(insertStr != '') insertStr += ',';
-            insertStr += "('{0}', '{1}', '{2}', '{3}', '{4}')".format(insta.url, insta.pointCount, insta.type, insta.tag, ts);
-        });
-        var q = "INSERT INTO instagram (url, point_count, type, tag, timestamp) VALUES {0}".format(insertStr);
-        runQuery(q, [], callback);
-    }
-
-    this.getRecentIGVideos = function(igObj, callback){
-		var typeStr = (igObj.type) ? " AND type = '{0}'".format(igObj.type) : '';
-		excludeStr = (igObj.exclude.length > 0) ? " AND url NOT IN ('" + igObj.exlude.join("' , '") + "') ":'';
-		var q = "SELECT * FROM instagram JOIN (select entry_id, max(point_count) as mcount FROM instagram WHERE is_active = 1 AND DATE(timestamp) = '{0}' {1} {2} Group By url) i2 ON instagram.entry_id = i2.entry_id ORDER BY i2.mcount DESC LIMIT {3}, {4}".format(igObj.date, typeStr, excludeStr, igObj.page, igObj.limit);
-        runQuery(q, [], callback);
-    }
-
-    this.getLastIG = function(callback){
-        var q = "SELECT * FROM instagram LIMIT 1";
-        runQuery(q, [], callback);
-    }
-
-    this.updateInstagramActiveStatus = function(obj, callback){
-        var ts = new Date().formatMYSQL();
-        var q = "UPDATE instagram SET is_active = ?, last_check = ?, embed_html = ? WHERE url = ?";
-        var params = [obj.status, ts, obj.content, obj.url];
-        runQuery(q, params, callback);
-    }
-
-    this.getInstagramTags = function(callback){
-        var q = "SELECT * FROM instagram_tags WHERE is_active = 1";
-        runQuery(q, [], callback);
-    }
-
     function runQuery(q, params, callback){
         site.db.conn.query(q, params, callback);
     }
