@@ -7,6 +7,8 @@ site = {
     request: require('request'),
     async: require('async'),
     excel: require(__dirname + '/excel'),
+    templateFolder: "C:/projects/node-portfolio/files/templates/",
+    saveFolder: "C:/projects/node-portfolio/files/saved/",
     setUp: function(){
         this.w = remote.getCurrentWindow();
 
@@ -14,44 +16,63 @@ site = {
             site.w.close();
         });
 
-        this.excel.call({fn:'SetExcelObject'}, function(error, result){
-            var message = (typeof result == 'undefined')?'excel app NOT set': 'excel app set';
+        this.excel.call({func:'SetExcelApplication'}, function(error, result){
+            var message = (typeof result === 'undefined')?'excel app NOT set': 'excel app set';
             console.log(message);
         });
 
         this.analysisTemplateQueries(2);
+    },
+    rand: function(len, charset){
+        charset = charset || "abcdefghijklmnopqrstuvwxyz0123456789";
+        var str = "";
+        for (var i=0; i < len; i++)
+            str += charset.charAt(Math.floor(Math.random() * charset.length));
+
+        return str;
     }
 };
 
 site.db = require(__dirname + '/../config/db')
 
-/*setTimeout(function(){
-    site.excel.call({fn:'PopulateSheet'}, function(error, result){
-        if(typeof result == 'undefined'){
-            console.log('populatesheet NOT set');
-            return false;
-        }
-
-        console.log('populatesheet is set');
-        console.log(result);
-    });
-},5000);*/
 site.analysisTemplateQueries = function(mfiID){
+    console.log('analysisTemplateQueries');
     site.db.getAnalysisTemplateData(mfiID, function(err, data){
-        site.excel.call({
-            fn:'PopulateDataSheet',
-            data: data
-        },function(error, result){
-            if(typeof result == 'undefined'){
-                console.log('getAnalysisTemplateData NOT set');
-                console.log(error);
-                return false;
-            }
+        var excelObj = {
+            func: 'PopulateDataSheet',
+            template: {
+                name: 'Analysis Template.xltx',
+                sheet:'DB_LOAD',
+                dataStart:[2,2], // cell B2
+                fieldLabelStart:[1,2], // cell B1
+                templatePath: site.templateFolder,
+                savePath : site.saveFolder,
+                id: site.rand(5),
+                pasteValues:['DATA_FORMATTING']
+            },
+            data: data,
+            fieldMapping: site.returnFieldMapping(data)
+        };
 
-            console.log('getAnalysisTemplateData is set');
-            console.log(result);
+        console.log(excelObj);
+
+        site.excel.call(excelObj, function(error, result){
+            console.log(error?'getAnalysisTemplateData NOT set':'getAnalysisTemplateData is set');
+            console.log(error || result);
         });
     });
+}
+
+site.returnFieldMapping = function(data){
+    var fieldMapping = [];
+    data.forEach(function(q, i){
+        var fArray = [];
+        q.fields.forEach(function(field){
+            fArray.push(field.name);
+        });
+        fieldMapping.push(fArray);
+    });
+    return fieldMapping;
 }
 
 $(function(){

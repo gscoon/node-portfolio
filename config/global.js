@@ -1,4 +1,4 @@
-if(typeof site == 'undefined') site = {};
+site = window.site || {};
 
 // First, checks if it isn't implemented yet.
 if (!String.prototype.format) {
