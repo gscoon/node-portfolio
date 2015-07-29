@@ -61,7 +61,7 @@ namespace GSEXCEL {
 
                 // determine range and set named range
                 Excel.Range oRng = dataSheet.get_Range(startCell, endCell);
-                var nrName = (string) "data." + dataTable.name; // name of named range
+                var nrName = (string) p.template.nrPrefix.data + "." + dataTable.name; // name of named range
                 //dataSheet.Names.Item(nrName, Type.Missing, Type.Missing).Delete();
                 this.wb[p.template.id].Names.Add(nrName, oRng);
 
@@ -76,7 +76,7 @@ namespace GSEXCEL {
                     foreach (var item in row){
                         // if this is the first row, handle field named ranges
                         if(r == 0){
-                            var fieldNR = "mapping." + dataTable.name + "." + item.Key;
+                            var fieldNR = p.template.nrPrefix.mapping + "." + dataTable.name + "." + item.Key;
                             var fieldCell = dataSheet.Cells[p.template.fieldLabelStart[0], p.template.fieldLabelStart[1] + offset + c];
                             fieldCell.Value = c;
                             try {
@@ -96,12 +96,13 @@ namespace GSEXCEL {
             }
 
             this.excelApp.Calculation = XlCalculation.xlCalculationAutomatic;
+            this.PasteSheetValues(this.wb[p.template.id], p.template.pasteValSheets);
+
             // handle pushes and pulls within template
-            this.HandleTemplatePointers(this.wb[p.template.id]);
+            this.HandleTemplatePointers(this.wb[p.template.id], p.template.nrPrefix);
             this.rehideHiddenSheets(this.wb[p.template.id].Worksheets, hiddenSheetList);
 
             this.excelApp.ScreenUpdating = true;
-
 
             var savePath = ((string)p.template.savePath + p.template.id + ".xlsx").Replace("/", "\\");
             try {
@@ -114,7 +115,15 @@ namespace GSEXCEL {
 
         }
 
-        private void HandleTemplatePointers(Excel.Workbook wb) {
+        private void PasteSheetValues(Excel.Workbook wb, dynamic snArr){
+            foreach(var sn in snArr){
+                var ws = (Excel.Worksheet) wb.Sheets[sn];
+                ws.Cells.Copy();
+                ws.Cells.PasteSpecial(XlPasteType.xlPasteValues, XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+            }
+        }
+
+        private void HandleTemplatePointers(Excel.Workbook wb, dynamic nrPrefix) {
             var nameList = new Dictionary<string, List<Dictionary<string, dynamic>>>();
             nameList["push"] = new List<Dictionary<string, dynamic>>();
             nameList["pull"] = new List<Dictionary<string, dynamic>>();
@@ -129,9 +138,9 @@ namespace GSEXCEL {
                         {"nr", name}
                     };
 
-                    if(nameSplit[0] == "push")
+                    if(nameSplit[0] == nrPrefix.push)
                         nameList["push"].Add(d);
-                    else if(nameSplit[0] == "pull")
+                    else if(nameSplit[0] == nrPrefix.pull)
                         nameList["pull"].Add(d);
                 }
             }

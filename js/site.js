@@ -48,7 +48,13 @@ site.analysisTemplateQueries = function(mfiID){
                 templatePath: site.templateFolder,
                 savePath : site.saveFolder,
                 id: site.rand(5),
-                pasteValues:['DATA_FORMATTING']
+                pasteValSheets:['DATA_FORMATTING'],
+                nrPrefix:{
+                    mapping:'mapping',
+                    push: 'push',
+                    pull: 'pull',
+                    data: 'data'
+                }
             },
             data: data,
             fieldMapping: site.returnFieldMapping(data)
