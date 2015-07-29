@@ -16,7 +16,7 @@ namespace GSEXCEL {
         private int uniqueKey = 0;
         private bool isAppSet = false;
         private Excel.Application excelApp;
-        private Dictionary<string, object> wb = new Dictionary<string, object>();
+        private Dictionary<string, Excel.Workbook> wb = new Dictionary<string, Excel.Workbook>();
         object oOpt = System.Reflection.Missing.Value; //for optional arguments
 
         public async Task<object> Invoke(dynamic input) {
@@ -29,22 +29,26 @@ namespace GSEXCEL {
             this.excelApp = new Excel.Application();
             this.excelApp.Visible = true;
             this.excelApp.DisplayAlerts = false;
-
-            //
             this.isAppSet = true;
             return true;
         }
 
+        private void CheckOnApp(dynamic p){
+            if(!this.isAppSet){
+                var setSuccess = this.SetExcelApplication(p);
+            }
+        }
+
         public object PopulateDataSheet(dynamic p){
             // set workbook and worksheet object
-            this.wb[p.template.id] = (Excel.Workbook) this.excelApp.Workbooks.Add(p.template.templatePath + p.template.name);
-            var dataSheet = (Excel.Worksheet)this.wb[p.template.id].Worksheets[p.template.sheet];
+            this.wb[p.wbID] = (Excel.Workbook) this.excelApp.Workbooks.Add(p.template.templatePath + p.template.name);
+            var dataSheet = (Excel.Worksheet)this.wb[p.wbID].Worksheets[p.template.sheet];
 
             this.excelApp.ScreenUpdating = false;
             this.excelApp.Calculation = XlCalculation.xlCalculationManual; // have to open workbook before setting calculation
 
             // unhide hidden sheets but remember them
-            List<int> hiddenSheetList = this.unhideHiddenSheets(this.wb[p.template.id].Worksheets);
+            List<int> hiddenSheetList = this.unhideHiddenSheets(this.wb[p.wbID].Worksheets);
 
             // column spacing between each dump
             int offset = 0;
@@ -63,7 +67,7 @@ namespace GSEXCEL {
                 Excel.Range oRng = dataSheet.get_Range(startCell, endCell);
                 var nrName = (string) p.template.nrPrefix.data + "." + dataTable.name; // name of named range
                 //dataSheet.Names.Item(nrName, Type.Missing, Type.Missing).Delete();
-                this.wb[p.template.id].Names.Add(nrName, oRng);
+                this.wb[p.wbID].Names.Add(nrName, oRng);
 
                 // set the object that will populate the range
                 object[,] outputArray = new object[numberOfRows, numberOfColumns];
@@ -80,7 +84,7 @@ namespace GSEXCEL {
                             var fieldCell = dataSheet.Cells[p.template.fieldLabelStart[0], p.template.fieldLabelStart[1] + offset + c];
                             fieldCell.Value = c;
                             try {
-                                this.wb[p.template.id].Names.Add(fieldNR, fieldCell);
+                                this.wb[p.wbID].Names.Add(fieldNR, fieldCell);
                             }
                             catch (Exception ex){
                                 //return fieldNR + " | " + GetExceptionDetails(ex);
@@ -96,24 +100,71 @@ namespace GSEXCEL {
             }
 
             this.excelApp.Calculation = XlCalculation.xlCalculationAutomatic;
-            this.PasteSheetValues(this.wb[p.template.id], p.template.pasteValSheets);
+            this.PasteSheetValues(this.wb[p.wbID], p.template.pasteValSheets);
 
             // handle pushes and pulls within template
-            this.HandleTemplatePointers(this.wb[p.template.id], p.template.nrPrefix);
-            this.rehideHiddenSheets(this.wb[p.template.id].Worksheets, hiddenSheetList);
+            this.HandleTemplatePointers(this.wb[p.wbID], p.template.nrPrefix);
+            this.rehideHiddenSheets(this.wb[p.wbID].Worksheets, hiddenSheetList);
 
             this.excelApp.ScreenUpdating = true;
 
-            var savePath = ((string)p.template.savePath + p.template.id + ".xlsx").Replace("/", "\\");
+            var savePath = ((string)p.template.savePath + p.wbID + ".xlsx").Replace("/", "\\");
             try {
-                this.wb[p.template.id].SaveAs(@savePath);
+                this.wb[p.wbID].SaveAs(@savePath);
             }
             catch (Exception ex){
                 return GetExceptionDetails(ex);
             }
             return savePath;
-
         }
+
+        public object OpenExcelFile(dynamic p){
+            this.CheckOnApp(p);
+
+            if(p.openType == "add"){
+                this.wb.Add(p.wbID, this.excelApp.Workbooks.Add(@p.src));
+            }
+            else{
+                this.wb.Add(p.wbID, this.excelApp.Workbooks.Open(@p.src));
+            }
+            return p;
+        }
+
+
+        public object SetSheetProperties(dynamic p){
+            this.CheckOnApp(p);
+
+            if(!this.isAppSet){
+                var setSuccess = this.SetExcelApplication(p);
+            }
+
+            this.wb[p.wbID] = (Excel.Workbook) this.excelApp.Workbooks.Add();
+
+            object oDocCustomProps = this.wb[p.wbID].CustomDocumentProperties;
+            object[] oArgs = {p.prop.key, false, Office.Enums.MsoDocProperties.msoPropertyTypeString, p.prop.val};
+
+            oDocCustomProps.GetType().InvokeMember("Add", BindingFlags.Default |
+                BindingFlags.InvokeMethod, null,
+                oDocCustomProps, oArgs);
+
+            p.results = "success";
+            return p;
+        }
+
+
+        public object GetSheetProperties(dynamic p){
+            if(!this.isAppSet)
+                return "Excel app not set";
+
+            dynamic oDocCustomProps = this.wb[p.wbID].CustomDocumentProperties;
+            p.results = new Dictionary<string, string>();
+            foreach (dynamic prop in oDocCustomProps){
+                p.results.Add(prop.Name, prop.Value);
+            }
+
+            return p;
+        }
+
 
         private void PasteSheetValues(Excel.Workbook wb, dynamic snArr){
             foreach(var sn in snArr){
@@ -122,6 +173,7 @@ namespace GSEXCEL {
                 ws.Cells.PasteSpecial(XlPasteType.xlPasteValues, XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
             }
         }
+
 
         private void HandleTemplatePointers(Excel.Workbook wb, dynamic nrPrefix) {
             var nameList = new Dictionary<string, List<Dictionary<string, dynamic>>>();
@@ -162,8 +214,8 @@ namespace GSEXCEL {
                     }
                 }
             }
-
         }
+
 
         private int ReturnColumnsCount(dynamic dList){
             int i = 0;
@@ -172,6 +224,7 @@ namespace GSEXCEL {
             }
             return i;
         }
+
 
         public static string GetExceptionDetails(Exception exception) {
             PropertyInfo[] properties = exception.GetType()
@@ -188,6 +241,7 @@ namespace GSEXCEL {
             return String.Join("\n", fields.ToArray());
         }
 
+
         private List<int> unhideHiddenSheets(Excel.Sheets sheets) {
             List<int> indexes = new List<int>();
             int index = 1;
@@ -200,6 +254,7 @@ namespace GSEXCEL {
             }
             return indexes;
         }
+
 
         private void rehideHiddenSheets(Excel.Sheets sheets, List<int> indexes) {
 
@@ -214,14 +269,16 @@ namespace GSEXCEL {
             }
         }
 
-    }
 
-    static class Helper
-    {
-        public static int AddSeven(int v)
-        {
-            return v + 7;
+        public object CloseExcelApp(dynamic p){
+            foreach(var w in this.wb){
+                w.Value.Close(0);
+            }
+            this.excelApp.Quit();
+            this.isAppSet = false;
+            return p;
         }
+
     }
 
 }
