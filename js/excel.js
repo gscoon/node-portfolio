@@ -1,4 +1,5 @@
-var edge = require('electron-edge2');
+// var edge = require('electron-edge2');
+var edge = require('edge');
 var baseDir = './';
 var excelClass = function(){
 

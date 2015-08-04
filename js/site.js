@@ -1,8 +1,12 @@
-var remote = require('remote');
-var dialog = remote.require('dialog');
-var atomScreen = remote.require('screen');
+var hasWindow = false;
 
-$ = require('jquery');
+if(hasWindow){
+    var remote = require('remote');
+    var dialog = remote.require('dialog');
+    var atomScreen = remote.require('screen');
+    $ = require('jquery');
+}
+//
 require(__dirname + '/global');
 config = require(__dirname + '/../config/config.json');
 
@@ -17,8 +21,11 @@ var appClass = function() {
     this.templateFolder = "C:/projects/node-portfolio/files/templates/";
     this.saveFolder = "C:/projects/node-portfolio/files/saved/";
     this.db = require(__dirname + '/db');
-    this.w = remote.getCurrentWindow();
-    this.subWindow = [];
+    if(hasWindow){
+        this.w = remote.getCurrentWindow();
+        this.subWindow = [];
+    }
+
     var __construct = function() {
         self.setUp();
     }()
@@ -30,13 +37,15 @@ appClass.prototype.setUp = function(){
     var self = this;
 
     self.currentBookID = null;
-    //self.w = remote.getCurrentWindow();
-    $(self.setEventHandlers.bind(this)); // when page has been loaded
-    self.excel.call({func:'SetExcelApplication'}, self.excelReturn);
+    if(hasWindow){
+        self.w = remote.getCurrentWindow();
+        $(self.setEventHandlers.bind(this)); // when page has been loaded
+        setInterval(function(){
+            self.mousePosition = atomScreen.getCursorScreenPoint();
+        }, 5000);
+    }
 
-    setInterval(function(){
-        self.mousePosition = atomScreen.getCursorScreenPoint();
-    }, 5000);
+    self.excel.call({func:'SetExcelApplication'}, self.excelReturn);
 }
 
 appClass.prototype.createNewWorkbook = function(){
@@ -170,29 +179,34 @@ appClass.prototype.hideUnhideSheets = function(sheetArray, callback){
 
 appClass.prototype.showExcelRangePrompt = function(callback){
     var self = this;
-    self.w.hide();
+    if(hasWindow) self.w.hide();
     self.showHideExcel(true);
     self.bringToFront(function(){
         self.excel.call({
             func: 'ShowExcelRangePrompt',
             wbID: self.currentBookID,
             promptText: 'Select fields'
-        }, function(err, results){
-
-            mousePosition = atomScreen.getCursorScreenPoint();
-            //self.w.setPosition(mousePosition.x - 20, mousePosition.y - 20);
+        }, function(err, ret){
             self.showHideExcel(false);
-            self.w.show();
-            if(typeof callback == 'function') callback(results);
+            if(hasWindow) self.w.show();
+            if(typeof callback == 'function') callback(ret);
         });
     });
     //ShowExcelRangePrompt
 }
 
-appClass.prototype.getFieldRange = function(){
+appClass.prototype.returnRangeValues = function(callback){
     var self = this;
-    self.showExcelRangePrompt(function(results){
-        console.log(results);
+    self.showExcelRangePrompt(function(ret){
+        if(typeof ret == 'object'){
+            if(typeof callback != 'function') callback = self.excelReturn;
+            self.excel.call({
+                func: 'ReturnSelectedRangeAsArray',
+                wbID: self.currentBookID,
+                sheetName: ret.results.sheet,
+                rangeAddress: ret.results.address
+            }, callback);
+        }
     });
 }
 //ReturnSelectedRangeAsArray

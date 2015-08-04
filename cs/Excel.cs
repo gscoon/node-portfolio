@@ -378,14 +378,6 @@ namespace GSEXCEL {
             return p;
         }
 
-        public object ReturnSelectedRangeAsArray(dynamic p){
-            Excel.Worksheet ws = wb[p.wbID].Sheets[p.sheetName];
-            Excel.Range rng = ws.get_Range(p.rangeAddress);
-            object rangeVal = rng.Value;
-            p.results = rangeVal;
-            return p;
-        }
-
         public object BringToFront(dynamic p){
             // works when there's a workbook
             excelApp.ActiveWindow.Activate();
@@ -402,14 +394,22 @@ namespace GSEXCEL {
                                  oMissing,
                                  oMissing,
                                  oMissing, 8);
-             try {
-                  p.results = rng.get_AddressLocal(false, false, XlReferenceStyle.xlA1, oMissing, oMissing);
+             if(rng != null){
+                 string rngAddress = rng.get_AddressLocal(false, false, XlReferenceStyle.xlA1, oMissing, oMissing);
+                 p.results = new Dictionary<string, string>();
+                 p.results.Add("address", rngAddress);
+                 p.results.Add("sheet", rng.Worksheet.Name);
              }
-             catch (Exception ex){
-                 return GetExceptionDetails(ex);
-             }
-             return p;
 
+             return p;
+        }
+
+        public object ReturnSelectedRangeAsArray(dynamic p){
+            Excel.Worksheet ws = wb[p.wbID].Sheets[p.sheetName];
+            Excel.Range rng = ws.get_Range(p.rangeAddress);
+            object rangeVal = rng.Value;
+            p.results = rangeVal;
+            return p;
         }
 
     }
