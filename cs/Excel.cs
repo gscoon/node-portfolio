@@ -17,7 +17,7 @@ namespace GSEXCEL {
         private bool isAppSet = false;
         private Excel.Application excelApp;
         private Dictionary<string, Excel.Workbook> wb = new Dictionary<string, Excel.Workbook>();
-        object oOpt = System.Reflection.Missing.Value; //for optional arguments
+        object oMissing = System.Reflection.Missing.Value; //for optional arguments
 
         public async Task<object> Invoke(dynamic input) {
             var functionName = (string)input.func;
@@ -25,18 +25,51 @@ namespace GSEXCEL {
             return this.GetType().InvokeMember(functionName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.InvokeMethod, null, this, new object[] {input});
         }
 
-        public object SetExcelApplication(dynamic parameters){
+        public object SetExcelApplication(dynamic p){
             this.excelApp = new Excel.Application();
-            this.excelApp.Visible = true;
+            this.excelApp.Visible = false;
             this.excelApp.DisplayAlerts = false;
             this.isAppSet = true;
-            return true;
+            p.success = true;
+            return p;
         }
 
         private void CheckOnApp(dynamic p){
             if(!this.isAppSet){
                 var setSuccess = this.SetExcelApplication(p);
             }
+        }
+
+        public object ShowHideExcelApp(dynamic p){
+            excelApp.Visible = p.isVisible;
+            p.success = true;
+            return p;
+        }
+
+        public object GetVisibleSheets(dynamic p){
+            var sheetList = new List<string>();
+            foreach(var ws in wb[p.wbID].Worksheets){
+                if(ws.Visible == XlSheetVisibility.xlSheetVisible){
+                    sheetList.Add(ws.Name);
+                }
+            }
+            p.results = sheetList;
+            return p;
+        }
+
+        public object GetAllSheets(dynamic p){
+            var sheetList = new List<Dictionary<string, dynamic>>();
+            foreach(var ws in wb[p.wbID].Worksheets){
+                Dictionary<string, dynamic> dic = new Dictionary<string, dynamic>();
+                dic.Add("name", (string) ws.Name);
+                dic.Add("isVisible", (bool) false);
+                if(ws.Visible == Excel.Enums.XlSheetVisibility.xlSheetVisible)
+                    dic["isVisible"] = true;
+
+                sheetList.Add(dic);
+            }
+            p.results = sheetList;
+            return p;
         }
 
         public object PopulateDataSheet(dynamic p){
@@ -95,7 +128,7 @@ namespace GSEXCEL {
                     }
                     r++;  // next row
                 }
-                oRng.set_Value(this.oOpt, outputArray);
+                oRng.set_Value(this.oMissing, outputArray);
                 offset = offset + numberOfColumns + 1;
             }
 
@@ -121,22 +154,19 @@ namespace GSEXCEL {
         public object OpenExcelFile(dynamic p){
             this.CheckOnApp(p);
 
-            if(p.openType == "add"){
-                this.wb.Add(p.wbID, this.excelApp.Workbooks.Add(@p.src));
-            }
-            else{
+            if(p.openType == "open"){
                 this.wb.Add(p.wbID, this.excelApp.Workbooks.Open(@p.src));
             }
+            else{
+                this.wb.Add(p.wbID, this.excelApp.Workbooks.Add(@p.src));
+            }
+
             return p;
         }
 
 
         public object SetSheetProperties(dynamic p){
             this.CheckOnApp(p);
-
-            if(!this.isAppSet){
-                var setSuccess = this.SetExcelApplication(p);
-            }
 
             this.wb[p.wbID] = (Excel.Workbook) this.excelApp.Workbooks.Add();
 
@@ -165,6 +195,27 @@ namespace GSEXCEL {
             return p;
         }
 
+        public object GetWorkbookNames(dynamic p){
+            try {
+                var nameList = new Dictionary<string, Dictionary<string, string>>();
+                foreach (Excel.Name nr in wb[p.wbID].Names){
+                    foreach(var targetName in p.names){
+                        if(nr.Name == targetName){
+                            nameList[nr.Name] = new Dictionary<string, string>();
+                            nameList[nr.Name]["value"] = nr.Value;
+                            nameList[nr.Name]["comment"] = nr.Comment;
+                        }
+                    }
+                }
+                p.results = nameList;
+            }
+            catch (Exception ex){
+                p.ex = GetExceptionDetails(ex);
+            }
+
+            return p;
+        }
+
 
         private void PasteSheetValues(Excel.Workbook wb, dynamic snArr){
             foreach(var sn in snArr){
@@ -173,7 +224,6 @@ namespace GSEXCEL {
                 ws.Cells.PasteSpecial(XlPasteType.xlPasteValues, XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
             }
         }
-
 
         private void HandleTemplatePointers(Excel.Workbook wb, dynamic nrPrefix) {
             var nameList = new Dictionary<string, List<Dictionary<string, dynamic>>>();
@@ -257,7 +307,6 @@ namespace GSEXCEL {
 
 
         private void rehideHiddenSheets(Excel.Sheets sheets, List<int> indexes) {
-
             foreach (int index in indexes){
                 int i = 1;
                 foreach (Excel.Worksheet sheet in sheets){
@@ -269,6 +318,48 @@ namespace GSEXCEL {
             }
         }
 
+        public object AddNewWorksheet(dynamic p){
+            Excel.Worksheet ws = wb[p.wbID].Worksheets.Add();
+            ws.Name = p.worksheetName;
+            p.success = true;
+            return p;
+        }
+
+        // sent from javascript
+        public object HideUnhideSheets(dynamic p){
+            int i = 0;
+            foreach(Excel.Worksheet sheet in wb[p.wbID].Sheets){
+                foreach(var givenSheet in p.sheetArray){
+                    if(sheet.Name == givenSheet.name){
+                        i++;
+                        if(givenSheet.type == "visible")
+                            sheet.Visible = Excel.Enums.XlSheetVisibility.xlSheetVisible;
+                        else if(givenSheet.type == "hidden")
+                            sheet.Visible = Excel.Enums.XlSheetVisibility.xlSheetHidden;
+                        else if(givenSheet.type == "veryhidden")
+                            sheet.Visible = Excel.Enums.XlSheetVisibility.xlSheetVeryHidden;
+                        else
+                            i--;
+                    }
+                }
+            }
+            p.successCount = i;
+            return p;
+        }
+
+        public object CreateNewWorkbook(dynamic p){
+            this.CheckOnApp(p);
+            this.wb[p.wbID] = (Excel.Workbook) this.excelApp.Workbooks.Add();
+            p.success = true;
+            return p;
+        }
+
+        public object SaveAndCloseWorkbook(dynamic p){
+            this.wb[p.wbID].SaveAs(@p.src);
+            wb[p.wbID].Close(0);
+            p.success = true;
+            return p;
+        }
 
         public object CloseExcelApp(dynamic p){
             foreach(var w in this.wb){
@@ -277,6 +368,48 @@ namespace GSEXCEL {
             this.excelApp.Quit();
             this.isAppSet = false;
             return p;
+        }
+
+        public object GetSelectedRangeAddress(dynamic p){
+            wb[p.wbID].Activate();
+            Excel.Application app = excelApp;
+            var rng = (Excel.Range)app.Selection;
+            p.results = rng.get_AddressLocal(rng.Rows.Count, rng.Columns.Count, XlReferenceStyle.xlA1, oMissing, oMissing);
+            return p;
+        }
+
+        public object ReturnSelectedRangeAsArray(dynamic p){
+            Excel.Worksheet ws = wb[p.wbID].Sheets[p.sheetName];
+            Excel.Range rng = ws.get_Range(p.rangeAddress);
+            object rangeVal = rng.Value;
+            p.results = rangeVal;
+            return p;
+        }
+
+        public object BringToFront(dynamic p){
+            // works when there's a workbook
+            excelApp.ActiveWindow.Activate();
+            p.success = true;
+            return p;
+        }
+
+        public object ShowExcelRangePrompt(dynamic p){
+            var rng = excelApp.InputBox(
+                                 p.promptText,
+                                 "Field Selection",
+                                 oMissing,
+                                 oMissing,
+                                 oMissing,
+                                 oMissing,
+                                 oMissing, 8);
+             try {
+                  p.results = rng.get_AddressLocal(false, false, XlReferenceStyle.xlA1, oMissing, oMissing);
+             }
+             catch (Exception ex){
+                 return GetExceptionDetails(ex);
+             }
+             return p;
+
         }
 
     }

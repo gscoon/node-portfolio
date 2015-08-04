@@ -60,6 +60,17 @@ html, body
     margin:0 3px;
 }
 
+.sub_window
+{
+    display:none;
+}
+
+#sw_0
+{
+    display:block;
+}
+
+
 /* templates */
 
 .template_menu_a
@@ -94,4 +105,12 @@ html, body
 {
     display:block;
     color:#555;
+}
+
+/* sheet selector */
+
+.sheet_select_a
+{
+    display:block;
+    padding:5px 0;
 }

@@ -3,11 +3,11 @@ var mysql = require('mysql');
 var dbClass = function(){
     console.log('MYSQL obj created');
     this.conn = mysql.createConnection({
-        host: site.config.db.server,
-        port: site.config.db.port,
-        user: site.config.db.user,
-        password: site.config.db.password,
-        database: site.config.db.name,
+        host: config.db.server,
+        port: config.db.port,
+        user: config.db.user,
+        password: config.db.password,
+        database: config.db.name,
         dateStrings: 'DATE' // most annoying feature that I had to account for
     });
 

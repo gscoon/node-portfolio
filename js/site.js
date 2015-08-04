@@ -1,126 +1,277 @@
 var remote = require('remote');
 var dialog = remote.require('dialog');
+var atomScreen = remote.require('screen');
 
 $ = require('jquery');
-require('./../config/global.js');
+require(__dirname + '/global');
+config = require(__dirname + '/../config/config.json');
 
-site = {
-    config: require(__dirname + '/../config/config.json'),
-    request: require('request'),
-    async: require('async'),
-    excel: require(__dirname + '/excel'),
-    templateFolder: "C:/projects/node-portfolio/files/templates/",
-    saveFolder: "C:/projects/node-portfolio/files/saved/",
-
-    setUp: function(){
-        var me = this;
-        this.currentBookID = null;
-        this.w = remote.getCurrentWindow();
-        this.setEventHandlers();
-
-        this.excel.call({func:'SetExcelApplication'}, function(error, result){
-            var message = (typeof result === 'undefined')?'excel app NOT set': 'excel app set';
-            console.log(message);
-        });
-    },
-
-    rand: function(len, charset){
-        charset = charset || "abcdefghijklmnopqrstuvwxyz0123456789";
-        var str = "";
-        for (var i=0; i < len; i++)
-            str += charset.charAt(Math.floor(Math.random() * charset.length));
-
-        return str;
-    },
-
-    close: function(){
-        site.excel.call({func: 'CloseExcelApp'}, this.excelReturn);
-        //site.w.close();
-    },
-
-    setDocumentProperties: function(){
-        this.currentBookID = site.rand(5);
-        site.excel.call({
-            func: 'SetSheetProperties',
-            wbID: this.currentBookID,
-            prop:{
-                val: 'np-config',
-                key: 'Somesing'
-            }
-        }, this.excelReturn);
-    },
-
-    getDocumentProperties: function(){
-        site.excel.call({
-            func: 'GetSheetProperties',
-            wbID: this.currentBookID,
-            prop:{
-                val: 'np-config',
-                name: 'Somesing'
-            }
-        }, this.excelReturn);
-    },
-
-    inspectFile: function(){
-        me = this;
-        dialog.showOpenDialog({
-                title: "Select an Excel file",
-                filters: [{name:'Excel File', extensions:['xls', 'xlsx', 'xlsm', 'xltx']}],
-                properties: ['openFile']
-            }, function(fileReturnArray){
-                if(!fileReturnArray || fileReturnArray.length != 1) return false;
-                var fileSrc = fileReturnArray[0];
-                // do something now that you have this file
-                me.currentBookID = site.rand(5);
-                site.excel.call({
-                    func: 'OpenExcelFile',
-                    wbID: me.currentBookID,
-                    openType: 'open',
-                    src: fileSrc
-                }, me.excelReturn);
-            })
-    },
-
-    excelReturn: function(error, result){
-        console.log(error);
-        console.log(result);
-    },
-
-    setEventHandlers: function(){
-        var me = this;
-
-        $('#x').on('click', function(){
-            site.w.close();
-        });
-
-        $('#reload_template_button').on('click', function(){
-            me.analysisTemplateQueries(2);
-        });
-
-        $('#inner_close_button').on('click', function(){
-            me.close();
-        });
-
-        $('#set_property_button').on('click', function(){
-            me.setDocumentProperties();
-        });
-
-        $('#get_property_button').on('click', function(){
-            me.getDocumentProperties();
-        });
-
-        $('#file_inspector_button').on('click', function(){
-            me.inspectFile();
-        });
-    }
-
+var appClass = function() {
+    var self = this;
+    this.currentBookID = null;
+    this.mousePosition = null;
+    this.content = require(__dirname + '/content');
+    this.request = require('request');
+    this.async = require('async');
+    this.excel = require(__dirname + '/excel');
+    this.templateFolder = "C:/projects/node-portfolio/files/templates/";
+    this.saveFolder = "C:/projects/node-portfolio/files/saved/";
+    this.db = require(__dirname + '/db');
+    this.w = remote.getCurrentWindow();
+    this.subWindow = [];
+    var __construct = function() {
+        self.setUp();
+    }()
 };
 
-site.db = require(__dirname + '/../config/db');
 
-site.analysisTemplateQueries = function(mfiID){
+
+appClass.prototype.setUp = function(){
+    var self = this;
+
+    self.currentBookID = null;
+    //self.w = remote.getCurrentWindow();
+    $(self.setEventHandlers.bind(this)); // when page has been loaded
+    self.excel.call({func:'SetExcelApplication'}, self.excelReturn);
+
+    setInterval(function(){
+        self.mousePosition = atomScreen.getCursorScreenPoint();
+    }, 5000);
+}
+
+appClass.prototype.createNewWorkbook = function(){
+    console.log('createNewWorkbook');
+    this.currentBookID = self.rand(5);
+    this.excel.call({func: 'CreateNewWorkbook', wbID: this.currentBookID}, this.excelReturn);
+}
+
+
+appClass.prototype.close = function(){
+    this.excel.call({func: 'CloseExcelApp'}, this.excelReturn);
+    //self.w.close();
+}
+
+appClass.prototype.setDocumentProperties = function(){
+    this.currentBookID = this.rand(5);
+
+    this.excel.call({
+        func: 'SetSheetProperties',
+        wbID: this.currentBookID,
+        prop:{
+            val: 'np-config',
+            key: 'Somesing'
+        }
+    }, this.excelReturn);
+}
+
+appClass.prototype.getDocumentProperties = function(){
+    this.excel.call({
+        func: 'GetSheetProperties',
+        wbID: this.currentBookID,
+        prop:{
+            val: 'np-config',
+            name: 'Somesing'
+        }
+    }, this.excelReturn);
+}
+
+appClass.prototype.openExistingFile = function(callback){
+    console.log("openExistingFile");
+    var self = this;
+    // dialog is a module included above
+    if(!callback) callback = self.excelReturn;
+    dialog.showOpenDialog({
+            title: "Select an Excel file",
+            filters: [{name:'Excel File', extensions:['xls', 'xlsx', 'xlsm', 'xltx']}],
+            properties: ['openFile']
+        }, function(fileReturnArray){
+            if(!fileReturnArray || fileReturnArray.length != 1) return false;
+            var fileSrc = fileReturnArray[0];
+            // do something now that you have this file
+            self.currentBookID = self.rand(5);
+            self.excel.call({
+                func: 'OpenExcelFile',
+                wbID: self.currentBookID,
+                openType: 'add',
+                src: fileSrc
+            }, callback);
+        });
+}
+
+// process whatever template is provided
+appClass.prototype.processTemplate = function(){
+    var self = this;
+    self.async.waterfall([
+        //func 1
+        // open an exisitng file / template
+        function(callback){
+            self.openExistingFile(function(err, oResults){
+                console.log('Opened the template file, now callback...');
+                callback(null, err, oResults);
+            });
+        },
+        //func 2
+        // return all sheets and look specifically for the config sheet
+        function(err, oResults, callback){
+            var o = oResults;
+            o.func = 'GetAllSheets';
+            self.excel.call(o, function(sErr, sResults){
+                if(sErr != null){ console.log({error:sErr}); return false;}
+                console.log(sResults);
+                // look for config sheet
+                var allSheets = sResults.results;
+                var sheetMatchArr = allSheets.filter(function( obj ) {
+                    return obj.name == config.configSheet.name;
+                });
+                if(sheetMatchArr.length > 0){
+                    // it already exists, so just unhide it
+                    var sArr = [{name: config.configSheet.name, 'type':'visible'}];
+                    self.hideUnhideSheets(sArr, function(){
+                        callback(null, allSheets);
+                    });
+                }
+
+                var o = {func:'AddNewWorksheet', wbID: self.currentBookID, worksheetName: config.configSheet.name}
+                self.excel.call(o, function(){
+                    callback(null, allSheets);
+                });
+            });
+        },
+        //func 3
+        // now you know the config sheet is there, finally do some processing
+        function(allSheets, callback){
+
+            // loop through each visible sheet and ask whether input or output
+            // get date
+            // get fields
+            // figure out custom fields
+
+            var sw = self.content.createNewSubwindow();
+            self.content.showSubWindow(sw);
+            self.content.displaySheetMenu(sw, allSheets);
+        }
+    ]); // end of async
+
+}
+
+appClass.prototype.returnTemplateConfig = function(){
+    var tc = {
+        importSheets: [],
+        reportingSheet: [],
+        pointers: []
+    };
+}
+
+appClass.prototype.hideUnhideSheets = function(sheetArray, callback){
+    if(typeof callback != 'function') callback = this.excelReturn;
+    var o = {func: 'HideUnhideSheets', sheetArray: sheetArray, wbID: this.currentBookID};
+    this.excel.call(o, callback);
+}
+
+appClass.prototype.showExcelRangePrompt = function(callback){
+    var self = this;
+    self.w.hide();
+    self.showHideExcel(true);
+    self.bringToFront(function(){
+        self.excel.call({
+            func: 'ShowExcelRangePrompt',
+            wbID: self.currentBookID,
+            promptText: 'Select fields'
+        }, function(err, results){
+
+            mousePosition = atomScreen.getCursorScreenPoint();
+            //self.w.setPosition(mousePosition.x - 20, mousePosition.y - 20);
+            self.showHideExcel(false);
+            self.w.show();
+            if(typeof callback == 'function') callback(results);
+        });
+    });
+    //ShowExcelRangePrompt
+}
+
+appClass.prototype.getFieldRange = function(){
+    var self = this;
+    self.showExcelRangePrompt(function(results){
+        console.log(results);
+    });
+}
+//ReturnSelectedRangeAsArray
+
+appClass.prototype.showHideExcel = function(isVisible){
+    this.excel.call({
+        func: 'ShowHideExcelApp',
+        isVisible: isVisible
+    }, this.excelReturn);
+}
+
+appClass.prototype.bringToFront = function(callback){
+    if(typeof callback != 'function') callback = this.excelReturn;
+    this.excel.call({
+        func: 'BringToFront'
+    }, callback);
+}
+
+appClass.prototype.getHighlightedText = function(){
+    var self = this;
+
+    var currentText = null;
+    var maxInterval = 60, count = 0;
+    var intervalID = setInterval(function(){
+
+        self.excel.call({
+            func: 'GetSelectedRangeAddress',
+            wbID: self.currentBookID
+        }, function(error, result){
+            count++;
+            console.log({result: result, error: error});
+            if(count == maxInterval){
+                console.log('max time reached');
+                clearInterval(intervalID);
+            }
+        });
+    }, 1000);
+}
+
+
+appClass.prototype.excelReturn = function(error, result){
+    console.log({result: result, err: error});
+}
+
+appClass.prototype.setEventHandlers = function(){
+
+    console.log('page loaded');
+    var self = this;
+    $('#x').on('click', function(){
+        self.w.close();
+    });
+
+    $('#reload_template_button').on('click', this.analysisTemplateQueries.bind(this, 2));
+
+    $('#inner_close_button').on('click', this.close.bind(this));
+
+    $('#set_property_button').on('click', this.setDocumentProperties.bind(this));
+
+    $('#get_property_button').on('click', this.getDocumentProperties.bind(this));
+
+    $('#open_existing_button').on('click', this.openExistingFile);
+
+    $('#highlighted_text_button').on('click', this.getHighlightedText.bind(this));
+
+    $('#new_wb_button').on('click', this.createNewWorkbook.bind(this));
+
+    $('#range_prompt_button').on('click', this.showExcelRangePrompt.bind(this));
+
+    $('#bring_front_button').on('click', this.bringToFront.bind(this));
+
+    $('#process_template_button').on('click', this.processTemplate.bind(this));
+}
+
+
+
+appClass.prototype.analysisTemplateQueries = function(mfiID){
+    var self = this;
     console.log('analysisTemplateQueries');
-    site.db.getAnalysisTemplateData(mfiID, function(err, data){
+    self.db.getAnalysisTemplateData(mfiID, function(err, data){
         var excelObj = {
             func: 'PopulateDataSheet',
             template: {
@@ -128,26 +279,27 @@ site.analysisTemplateQueries = function(mfiID){
                 sheet: 'DB_LOAD',
                 dataStart: [2,2], // cell B2
                 fieldLabelStart: [1,2], // cell B1
-                templatePath: site.templateFolder,
-                savePath : site.saveFolder,
+                templatePath: self.templateFolder,
+                savePath : self.saveFolder,
                 pasteValSheets: ['DATA_FORMATTING'],
                 nrPrefix:{
                     mapping: 'mapping',
                     push: 'push',
                     pull: 'pull',
-                    data: 'data'
+                    data: 'data',
+                    uploadField: 'field'
                 }
             },
-            wbID: site.rand(5),
+            wbID: self.rand(5),
             data: data,
-            fieldMapping: site.returnFieldMapping(data)
+            fieldMapping: self.returnFieldMapping(data)
         };
 
-        site.excel.call(excelObj, this.excelReturn);
+        self.excel.call(excelObj, self.excelReturn);
     });
 }
 
-site.returnFieldMapping = function(data){
+appClass.prototype.returnFieldMapping = function(data){
     var fieldMapping = [];
     data.forEach(function(q, i){
         var fArray = [];
@@ -159,6 +311,13 @@ site.returnFieldMapping = function(data){
     return fieldMapping;
 }
 
-$(function(){
-    site.setUp();
-});
+appClass.prototype.rand = function(len, charset){
+    charset = charset || "abcdefghijklmnopqrstuvwxyz0123456789";
+    var str = "";
+    for (var i=0; i < len; i++)
+        str += charset.charAt(Math.floor(Math.random() * charset.length));
+
+    return str;
+}
+
+site = new appClass();

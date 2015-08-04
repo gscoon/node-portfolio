@@ -15,6 +15,7 @@ app.on('window-all-closed', function() {
   if (process.platform != 'darwin') {
       console.log('All windows closed');
       app.quit();
+      //process.exit();
       console.log('All windows closed 2');
   }
 });
