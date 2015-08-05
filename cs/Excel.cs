@@ -161,6 +161,8 @@ namespace GSEXCEL {
                 this.wb.Add(p.wbID, this.excelApp.Workbooks.Add(@p.src));
             }
 
+            var pp = GetAllSheets(p);
+            p.results = pp.results;
             return p;
         }
 
@@ -409,6 +411,65 @@ namespace GSEXCEL {
             Excel.Range rng = ws.get_Range(p.rangeAddress);
             object rangeVal = rng.Value;
             p.results = rangeVal;
+            return p;
+        }
+
+        public object ReturnNamedRangeAsArray(dynamic p){
+            p.results = new Dictionary<string, Dictionary<string, dynamic>>();
+            foreach (var pnr in p.nrArray){
+                foreach (Excel.Name nr in wb[p.wbID].Names){
+                    if(nr.Name == pnr){
+                        Dictionary<string, dynamic> n = new Dictionary<string, dynamic>();
+                        n.Add("value", nr.Value);
+                        n.Add("comment", nr.Comment);
+                        n.Add("name", nr.Name);
+                        Excel.Range rng = nr.RefersToRange;
+                        n.Add("rng", (object) rng.Value2);
+                        p.results.Add(nr.Name, n);
+                    }
+                }
+
+            }
+
+            return p;
+        }
+
+        // reutrns data array based on fields and dates
+        public object ReturnDataValsByDims(dynamic p){
+            Excel.Worksheet ws = wb[p.wbID].Sheets[p.sheetName];
+
+            // usally the date
+            Excel.Range rowRange = ws.get_Range(p.rowAddress);
+            // usually the field
+            Excel.Range colRange = ws.get_Range(p.colAddress);
+
+            Excel.Range start = ws.Cells[colRange.Row, rowRange.Column];
+
+            Excel.Range end = ws.Cells[(colRange.Row + colRange.Rows.Count - 1), (rowRange.Column + rowRange.Columns.Count - 1)];
+
+            Excel.Range valueRange = ws.get_Range(start, end);
+            object[,] valArray = (object[,]) valueRange.get_Value(oMissing);
+            List<List<object>> list = new List<List<object>>();
+            int size1 = valArray.GetLength(1);
+            Console.WriteLine("Size1: " + size1.ToString());
+            int size0 = valArray.GetLength(0);
+            Console.WriteLine("Size0: " + size0.ToString());
+
+            // Loop through each row in within each column
+            for(int j=0; j<size1; j++){
+                List<object> subList = new List<object>();
+                    for(int i=0; i<size0; i++){
+                    subList.Add(valArray[i+1, j+1]);
+                    // excel array starts at 1
+                }
+                list.Add(subList);
+            }
+
+            p.results = list;
+
+            string rngAddress = valueRange.get_AddressLocal(false, false, XlReferenceStyle.xlA1, oMissing, oMissing);
+            p.valueAddr = rngAddress;
+            Console.WriteLine("Rank: " + valArray.Rank.ToString());
             return p;
         }
 

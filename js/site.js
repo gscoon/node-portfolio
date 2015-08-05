@@ -84,8 +84,8 @@ appClass.prototype.getDocumentProperties = function(){
     }, this.excelReturn);
 }
 
-appClass.prototype.openExistingFile = function(callback){
-    console.log("openExistingFile");
+appClass.prototype.showFileDialog = function(callback){
+    console.log("showFileDialog");
     var self = this;
     // dialog is a module included above
     if(!callback) callback = self.excelReturn;
@@ -97,14 +97,19 @@ appClass.prototype.openExistingFile = function(callback){
             if(!fileReturnArray || fileReturnArray.length != 1) return false;
             var fileSrc = fileReturnArray[0];
             // do something now that you have this file
-            self.currentBookID = self.rand(5);
-            self.excel.call({
-                func: 'OpenExcelFile',
-                wbID: self.currentBookID,
-                openType: 'add',
-                src: fileSrc
-            }, callback);
+            self.openExistingFile(fileSrc, callback);
         });
+}
+
+appClass.prototype.openExistingFile = function(fileSrc, callback){
+    var self = this;
+    self.currentBookID = self.rand(5);
+    self.excel.call({
+        func: 'OpenExcelFile',
+        wbID: self.currentBookID,
+        openType: 'add',
+        src: fileSrc
+    }, callback);
 }
 
 // process whatever template is provided
@@ -114,7 +119,7 @@ appClass.prototype.processTemplate = function(){
         //func 1
         // open an exisitng file / template
         function(callback){
-            self.openExistingFile(function(err, oResults){
+            self.showFileDialog(function(err, oResults){
                 console.log('Opened the template file, now callback...');
                 callback(null, err, oResults);
             });
@@ -195,7 +200,28 @@ appClass.prototype.showExcelRangePrompt = function(callback){
     //ShowExcelRangePrompt
 }
 
-appClass.prototype.returnRangeValues = function(callback){
+appClass.prototype.findDataValuesByDim = function(sheet, rowAddr, colAddr, callback){
+    var self = this;
+    self.excel.call({
+        func: 'ReturnDataValsByDims',
+        wbID: self.currentBookID,
+        sheetName: sheet,
+        rowAddress: rowAddr,
+        colAddress: colAddr
+    }, callback);
+}
+
+appClass.prototype.returnRangeValues = function(sheet, address, callback){
+    var self = this;
+    self.excel.call({
+        func: 'ReturnSelectedRangeAsArray',
+        wbID: self.currentBookID,
+        sheetName: sheet,
+        rangeAddress: address
+    }, callback);
+}
+
+/*appClass.prototype.returnRangeValues = function(callback){
     var self = this;
     self.showExcelRangePrompt(function(ret){
         if(typeof ret == 'object'){
@@ -208,7 +234,18 @@ appClass.prototype.returnRangeValues = function(callback){
             }, callback);
         }
     });
+}*/
+
+appClass.prototype.returnNamedRangeValues = function(nrArray, callback){
+    var self = this;
+    self.excel.call({
+        func: 'ReturnNamedRangeAsArray',
+        wbID: self.currentBookID,
+        nrArray: nrArray
+    }, callback);
+
 }
+
 //ReturnSelectedRangeAsArray
 
 appClass.prototype.showHideExcel = function(isVisible){
@@ -246,7 +283,6 @@ appClass.prototype.getHighlightedText = function(){
     }, 1000);
 }
 
-
 appClass.prototype.excelReturn = function(error, result){
     console.log({result: result, err: error});
 }
@@ -279,8 +315,6 @@ appClass.prototype.setEventHandlers = function(){
 
     $('#process_template_button').on('click', this.processTemplate.bind(this));
 }
-
-
 
 appClass.prototype.analysisTemplateQueries = function(mfiID){
     var self = this;

@@ -71,6 +71,23 @@ var dbClass = function(){
         }, callBack);
     }
 
+    this.getReportingLabelsBySheet = function(sheetID, callback){
+        var q = "SELECT fl.sheet_id, fl.field_label_id, a.alias FROM reporting_field_label_alias a JOIN reporting_field_label fl ON fl.field_label_id = a.field_label_id WHERE fl.sheet_id = ?";
+        runQuery(q, [sheetID], callback);
+    }
+
+    this.addReportingFieldSet = function(fObj, callback){
+        var q = 'INSERT INTO reporting_field_set (mfi_id, sheet_id, field_set_date, is_audited) VALUES (?, ?,  DATE(DATE_ADD("1899-12-30", INTERVAL ? day)), ?)';
+        // 1899-12-30 because excel addes leep year in 1900
+        var params = [fObj.mfiID, fObj.sheetID, fObj.fsDate, fObj.customDim];
+        runQuery(q, params, callback);
+    }
+
+    this.insertDataValues = function(valueArray, callback){
+        var q = "INSERT INTO reported_financials (field_label_id, field_value, field_set_id) VALUES ?";
+        runQuery(q, [valueArray], callback);
+    }
+
     function runQuery(q, params, callback){
         site.db.conn.query(q, params, callback);
     }
