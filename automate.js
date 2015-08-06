@@ -1,56 +1,129 @@
 require('./js/site');
 
-var mfiID = 2;
-site.async.waterfall([
-    //1. open workbook
-    function(callback){
-        var fileSrc = 'C:/projects/node-portfolio/files/templates/filled/Access Bank_2406478.xlsx';
-        site.openExistingFile(fileSrc, callback);
-    },
-    //2. find config sheet and config variable
-    function(ret, callback){
-        var sheetArray = ret.results;
-        var sheetMatchArr = sheetArray.filter(function( sht ) {
-            return sht.name == config.configSheet.name;
+var auto = new function(){
+
+    var startTemplateProcess = function(){
+        var row = null;
+        console.log('started ' + site.moment().format("YYYY-MM-DD HH:mm:ss"));
+        site.async.waterfall([
+            // 1. check refresh table
+            function(callback){
+                site.db.checkRefreshTable(callback);
+            },
+            // 2. make sure everything is set correctly
+            function(ret, fields, callback){
+                if(ret.length == 0){
+                    callback("No refresh found");
+                    return false;
+                }
+
+                row = ret[0];
+
+                if(row.config == null || !row.config.isJSONString()){
+                    callback("Config not JSON");
+                    return false;
+                }
+
+                row.configObj = JSON.parse(row.config);
+                callback(null);
+            },
+            // 3. get and process sql queries
+            function(callback){
+                var dArray = row.configObj.reportTemplate.dataNeeded;
+                site.db.getReportingQueries(dArray, row.mfi_id, callback);
+            },
+            // 5. add data to object and update refresh table
+            function(data, callback){
+                row.data = data;
+                site.db.updateRefreshTable(row.refresh_id, 'processing', callback);
+            },
+            // 6.
+            function(ret, fields, callback){
+                processReportingTemplate(row);
+                callback(null, true);
+            }
+        ], function(err, ret){
+            console.log({ret:ret, err:err});
         });
-        // only proceed if config sheet is found
-        if(sheetMatchArr.length > 0)
-            site.returnRangeValues(config.configSheet.name, "A1", callback)
-    },
-    //3. get config object
-    //4. process template
-    function(ret, callback){
-        if(!ret.results.isJSONString) return false;
-        var sheetConfig = JSON.parse(ret.results);
-        //loop through each sheet
-        site.async.each(sheetConfig.importTemplate, function(t){
+    }
+
+    // get refresh
+    // get template
+    // parse json
+    // get queries
+
+
+    var processReportingTemplate = function(rObj){
+        console.log('processReportingTemplate');
+        var mfiID = rObj.mfi_id;
+        site.currentBookID = site.rand(5);
+        var excelObj = {
+            func: 'PopulateDataSheet',
+            template: {
+                dataSheet: 'DB_LOAD',
+                dataStart: [2,2], // cell B2
+                fieldLabelStart: [1,2], // cell B1
+                src: rObj.src,
+                savePath: rObj.dest,
+                pasteValSheets: rObj.configObj.reportTemplate.pasteValsSheet,
+                nrPrefix: {
+                    mapping: 'mapping',
+                    push: 'push',
+                    pull: 'pull',
+                    data: 'data'
+                }
+            },
+            wbID: site.currentBookID,
+            data: rObj.data,
+            fieldMapping: site.returnFieldMapping(rObj.data)
+        };
+        site.excel.call(excelObj, function(err, ret){
+            console.log("reporting template complete");
+            //do aggregated financials
+            processUploadSheetSheet(rObj, function(finalE, finalR){
+                // final call back, update refresh table
+                site.db.updateRefreshTable(rObj.refresh_id, 'completed', function(){});
+                console.log({finalE: finalE, finalR: finalR});
+                console.log('Full process completed');
+                console.log('ended ' + site.moment().format("YYYY-MM-DD HH:mm:ss"));
+            });
+        });
+    }
+
+
+    var processUploadSheetSheet = function(rObj, finalCallback){
+        console.log("processUploadSheetSheet");
+        var mfiID = rObj.mfi_id;
+        var sheetConfig = rObj.configObj;
+        site.async.each(sheetConfig.importTemplate, function(t, callback){
             // yep, async within an async
             site.async.waterfall([
                 // 4a.
                 function(cback){
                     // get the named ranges of dates, fields, and custom dimensions if available
                     var nrArray = [t.date.nr, t.field.nr];
-                    if(t.customDim.nr != null) nrArray.push(t.customField.nr);
+                    if(t.customDim.nr != null)
+                        nrArray.push(t.customField.nr);
                     site.returnNamedRangeValues(nrArray, cback);
                 },
                 // 4b.
                 function(ret, cback){
                     var nrObj = ret.results;
                     // get field ids for each field based on matched aliases
-                    mapTemplateFields(t.id, nrObj[t.field.nr].rng, function(idArray){
+                    mapTemplateFields(t.sheetID, nrObj[t.field.nr].rng, function(idArray){
                         nrObj.fieldIDArray = idArray;
-                        cback(null, nrObj, cback);
+                        cback(null, nrObj);
                     });
                 },
                 // 4c find the data already
                 function(nrObj, cback){
-
                     var columnAddr = nrObj[t.field.nr].value;
                     var rowAddr = nrObj[t.date.nr].value;
+                    // pull all data values into a 2 dim array [column][row]
                     site.findDataValuesByDim(t.sheet, rowAddr, columnAddr,  function(err, ret){
                         // loop through each data column
-                        for(var i = 0; i < ret.results.length; i++){
-                            var colData = ret.results[i];
+                        site.async.each(ret.results, function(colData, cb){
+                            var i = ret.results.indexOf(colData);
                             var fsDate = nrObj[t.date.nr].rng[i];
                             // handle custom dimension
                             var customDim = (t.customDim.nr == null) ? t.customDim.value : nrObj[t.customDim.nr].rng[i];
@@ -60,47 +133,54 @@ site.async.waterfall([
                             // create new field set
                             addFieldSet({
                                 mfiID: mfiID,
-                                sheetID: t.id,
+                                sheetID: t.sheetID,
                                 fsDate: fsDate,
                                 customDim: customDim,
                                 vals: colData,
                                 ids: nrObj.fieldIDArray
-                            });
-                        }
+                            }, cb);
+                        }, cback);
                     });
                 }
-
-            ]);
-        }); // end of loop throught input sheets
+            ], callback); // end of waterfall
+        }, finalCallback); // end of loop throught input sheets
     }
-]);
 
-function addFieldSet(fObj){
-    site.db.addReportingFieldSet(fObj, function(err, results){
-        var fieldsetID = results.insertId;
-        var insertArray = [];
-        for(var j = 0; j < fObj.vals.length; j++){
-            var currentVal = fObj.vals[j];
-            if(typeof currentVal != 'number') currentVal = 0;
-            var currentFieldID = fObj.ids[j];
-            insertArray.push([currentFieldID, currentVal, fieldsetID]);
-        }
-        site.db.insertDataValues(insertArray, function(err, ret){console.log(ret)});
-    });
-}
+    function addFieldSet(fObj, callback){
+        site.db.addReportingFieldSet(fObj, function(err, results){
+            if(err != null) return false;
+            //console.log(results);
 
-function mapTemplateFields(sheetID, fieldArray, callback){
-    site.db.getReportingLabelsBySheet(sheetID, function(err, results){
-        var idArray = [];
-        for(f = 0; f < fieldArray.length; f++){
-            var i = idArray.length;
-            idArray[i] = null;
-            for(r = 0; r < results.length; r++){
-                if(results[r].alias == fieldArray[f]){
-                    idArray[i] = results[r].field_label_id;
+            var fieldsetID = results.insertId;
+            var insertArray = [];
+            for(var j = 0; j < fObj.vals.length; j++){
+                var currentVal = fObj.vals[j];
+                if(typeof currentVal != 'number')
+                    currentVal = 0;
+                var currentFieldID = fObj.ids[j];
+                insertArray.push([currentFieldID, currentVal, fieldsetID]);
+            }
+            site.db.insertDataValues(insertArray, callback);
+        });
+    }
+
+    function mapTemplateFields(sheetID, fieldArray, callback){
+        site.db.getReportingLabelsBySheet(sheetID, function(err, results){
+            var idArray = [];
+            for(f = 0; f < fieldArray.length; f++){
+                var i = idArray.length;
+                idArray[i] = null;
+                for(r = 0; r < results.length; r++){
+                    if(results[r].alias == fieldArray[f])
+                        idArray[i] = results[r].field_label_id
                 }
             }
-        }
-        callback(idArray);
-    });
+            callback(idArray);
+        });
+    }
+
+    var __construct = function() {
+        startTemplateProcess();
+    }()
+
 }

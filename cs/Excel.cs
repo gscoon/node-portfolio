@@ -73,13 +73,12 @@ namespace GSEXCEL {
         }
 
         public object PopulateDataSheet(dynamic p){
+            this.CheckOnApp(p);
             // set workbook and worksheet object
-            this.wb[p.wbID] = (Excel.Workbook) this.excelApp.Workbooks.Add(p.template.templatePath + p.template.name);
-            var dataSheet = (Excel.Worksheet)this.wb[p.wbID].Worksheets[p.template.sheet];
-
+            this.wb[p.wbID] = (Excel.Workbook) this.excelApp.Workbooks.Add(p.template.src);
+            var dataSheet = (Excel.Worksheet)this.wb[p.wbID].Worksheets[p.template.dataSheet];
             this.excelApp.ScreenUpdating = false;
             this.excelApp.Calculation = XlCalculation.xlCalculationManual; // have to open workbook before setting calculation
-
             // unhide hidden sheets but remember them
             List<int> hiddenSheetList = this.unhideHiddenSheets(this.wb[p.wbID].Worksheets);
 
@@ -95,11 +94,11 @@ namespace GSEXCEL {
                 var startCell = (Excel.Range) dataSheet.Cells[p.template.dataStart[0], p.template.dataStart[1] + offset];
                 var endCell = (Excel.Range) dataSheet.Cells[p.template.dataStart[0] + numberOfRows - 1, numberOfColumns + p.template.dataStart[1] + offset - 1];
 
-
                 // determine range and set named range
                 Excel.Range oRng = dataSheet.get_Range(startCell, endCell);
-                var nrName = (string) p.template.nrPrefix.data + "." + dataTable.name; // name of named range
+                var nrName = (string) p.template.nrPrefix.data + "." + dataTable.query_id; // name of named range
                 //dataSheet.Names.Item(nrName, Type.Missing, Type.Missing).Delete();
+
                 this.wb[p.wbID].Names.Add(nrName, oRng);
 
                 // set the object that will populate the range
@@ -113,7 +112,7 @@ namespace GSEXCEL {
                     foreach (var item in row){
                         // if this is the first row, handle field named ranges
                         if(r == 0){
-                            var fieldNR = p.template.nrPrefix.mapping + "." + dataTable.name + "." + item.Key;
+                            var fieldNR = p.template.nrPrefix.mapping + "." + dataTable.query_id + "." + item.Key;
                             var fieldCell = dataSheet.Cells[p.template.fieldLabelStart[0], p.template.fieldLabelStart[1] + offset + c];
                             fieldCell.Value = c;
                             try {
@@ -144,11 +143,13 @@ namespace GSEXCEL {
             var savePath = ((string)p.template.savePath + p.wbID + ".xlsx").Replace("/", "\\");
             try {
                 this.wb[p.wbID].SaveAs(@savePath);
+                p.success = true;
             }
             catch (Exception ex){
-                return GetExceptionDetails(ex);
+                p.success = false;
+                p.fail = GetExceptionDetails(ex);
             }
-            return savePath;
+            return p;
         }
 
         public object OpenExcelFile(dynamic p){
@@ -451,9 +452,9 @@ namespace GSEXCEL {
             object[,] valArray = (object[,]) valueRange.get_Value(oMissing);
             List<List<object>> list = new List<List<object>>();
             int size1 = valArray.GetLength(1);
-            Console.WriteLine("Size1: " + size1.ToString());
+            //Console.WriteLine("Size1: " + size1.ToString());
             int size0 = valArray.GetLength(0);
-            Console.WriteLine("Size0: " + size0.ToString());
+            //Console.WriteLine("Size0: " + size0.ToString());
 
             // Loop through each row in within each column
             for(int j=0; j<size1; j++){
@@ -469,7 +470,7 @@ namespace GSEXCEL {
 
             string rngAddress = valueRange.get_AddressLocal(false, false, XlReferenceStyle.xlA1, oMissing, oMissing);
             p.valueAddr = rngAddress;
-            Console.WriteLine("Rank: " + valArray.Rank.ToString());
+            //Console.WriteLine("Rank: " + valArray.Rank.ToString());
             return p;
         }
 

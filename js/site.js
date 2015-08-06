@@ -19,8 +19,10 @@ var appClass = function() {
     this.async = require('async');
     this.excel = require(__dirname + '/excel');
     this.templateFolder = "C:/projects/node-portfolio/files/templates/";
-    this.saveFolder = "C:/projects/node-portfolio/files/saved/";
+    this.saveFolder = "C:/projects/node-portfolio/files/processed/";
     this.db = require(__dirname + '/db');
+    this.moment = require('moment');
+
     if(hasWindow){
         this.w = remote.getCurrentWindow();
         this.subWindow = [];
@@ -45,7 +47,7 @@ appClass.prototype.setUp = function(){
         }, 5000);
     }
 
-    self.excel.call({func:'SetExcelApplication'}, self.excelReturn);
+    //self.excel.call({func:'SetExcelApplication'}, self.excelReturn);
 }
 
 appClass.prototype.createNewWorkbook = function(){
@@ -82,6 +84,10 @@ appClass.prototype.getDocumentProperties = function(){
             name: 'Somesing'
         }
     }, this.excelReturn);
+}
+
+appClass.prototype.getAllSheets = function(callback){
+    this.excel.call({func: 'GetAllSheets', wbID: this.currentBookID}, callback);
 }
 
 appClass.prototype.showFileDialog = function(callback){
@@ -245,8 +251,6 @@ appClass.prototype.returnNamedRangeValues = function(nrArray, callback){
     }, callback);
 
 }
-
-//ReturnSelectedRangeAsArray
 
 appClass.prototype.showHideExcel = function(isVisible){
     this.excel.call({

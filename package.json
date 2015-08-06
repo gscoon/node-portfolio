@@ -1,17 +1,18 @@
 {
-    "name": "node-portfolio",
-    "version": "0.1.0",
-    "main": "main.js",
-    "dependencies": {
-        "async": "*",
-        "mysql": "*",
-        "jquery": "*",
-        "request": "*",
-        "electron-edge2": "*",
-        "electron-prebuilt": "*"
-    },
-    "devDependencies": {
-        "electron-prebuilt": "^0.30.0",
-        "electron-rebuild": "^0.2.5"
-    }
+  "name": "node-portfolio",
+  "version": "0.1.0",
+  "main": "main.js",
+  "dependencies": {
+    "async": "*",
+    "electron-edge2": "*",
+    "electron-prebuilt": "*",
+    "jquery": "*",
+    "moment": "^2.10.6",
+    "mysql": "*",
+    "request": "*"
+  },
+  "devDependencies": {
+    "electron-prebuilt": "^0.30.0",
+    "electron-rebuild": "^0.2.5"
+  }
 }
