@@ -41,17 +41,18 @@ var auto = new function(){
             }
         ], function(err, ret){
             // FInal callback
-            console.log({ret:ret, err:err});
-            if(ret !== null){
-                // success !!!
-                site.closeWorkbook(row.bookID, emptyFunc);
-                site.db.updateRefreshTable(row.refresh_id, 'completed', function(){
-                    console.log('ended ' + site.moment().format("YYYY-MM-DD HH:mm:ss"));
-                });
-            }
-
-            console.log('Full process completed');
             setTimeout(startTemplateProcess, 1000 * 5);
+            console.log('Full process completed');
+            console.log({ret:ret, err:err});
+            
+            if(err != false) // not running
+                return;
+
+            // success
+            site.closeWorkbook(row.bookID, emptyFunc);
+            site.db.updateRefreshTable(row.refresh_id, 'completed', function(){
+                console.log('ended ' + site.moment().format("YYYY-MM-DD HH:mm:ss"));
+            });
         });
     }
 
