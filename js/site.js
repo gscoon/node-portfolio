@@ -12,7 +12,6 @@ config = require(__dirname + '/../config/config.json');
 
 var appClass = function() {
     var self = this;
-    this.currentBookID = null;
     this.mousePosition = null;
     this.content = require(__dirname + '/content');
     this.request = require('request');
@@ -37,8 +36,6 @@ var appClass = function() {
 
 appClass.prototype.setUp = function(){
     var self = this;
-
-    self.currentBookID = null;
     if(hasWindow){
         self.w = remote.getCurrentWindow();
         $(self.setEventHandlers.bind(this)); // when page has been loaded
@@ -52,8 +49,8 @@ appClass.prototype.setUp = function(){
 
 appClass.prototype.createNewWorkbook = function(){
     console.log('createNewWorkbook');
-    this.currentBookID = self.rand(5);
-    this.excel.call({func: 'CreateNewWorkbook', wbID: this.currentBookID}, this.excelReturn);
+    var wbID = self.rand(5);
+    this.excel.call({func: 'CreateNewWorkbook', wbID: wbID}, this.excelReturn);
 }
 
 
@@ -63,11 +60,11 @@ appClass.prototype.close = function(){
 }
 
 appClass.prototype.setDocumentProperties = function(){
-    this.currentBookID = this.rand(5);
+    var wbID = this.rand(5);
 
     this.excel.call({
         func: 'SetSheetProperties',
-        wbID: this.currentBookID,
+        wbID: wbID,
         prop:{
             val: 'np-config',
             key: 'Somesing'
@@ -75,10 +72,10 @@ appClass.prototype.setDocumentProperties = function(){
     }, this.excelReturn);
 }
 
-appClass.prototype.getDocumentProperties = function(){
+appClass.prototype.getDocumentProperties = function(wbID){
     this.excel.call({
         func: 'GetSheetProperties',
-        wbID: this.currentBookID,
+        wbID: wbID,
         prop:{
             val: 'np-config',
             name: 'Somesing'
@@ -86,8 +83,8 @@ appClass.prototype.getDocumentProperties = function(){
     }, this.excelReturn);
 }
 
-appClass.prototype.getAllSheets = function(callback){
-    this.excel.call({func: 'GetAllSheets', wbID: this.currentBookID}, callback);
+appClass.prototype.getAllSheets = function(wbID, callback){
+    this.excel.call({func: 'GetAllSheets', wbID: wbID}, callback);
 }
 
 appClass.prototype.showFileDialog = function(callback){
@@ -109,69 +106,20 @@ appClass.prototype.showFileDialog = function(callback){
 
 appClass.prototype.openExistingFile = function(fileSrc, callback){
     var self = this;
-    self.currentBookID = self.rand(5);
+    var wbID = self.rand(5);
     self.excel.call({
         func: 'OpenExcelFile',
-        wbID: self.currentBookID,
+        wbID: wbID,
         openType: 'add',
         src: fileSrc
     }, callback);
 }
 
-// process whatever template is provided
-appClass.prototype.processTemplate = function(){
-    var self = this;
-    self.async.waterfall([
-        //func 1
-        // open an exisitng file / template
-        function(callback){
-            self.showFileDialog(function(err, oResults){
-                console.log('Opened the template file, now callback...');
-                callback(null, err, oResults);
-            });
-        },
-        //func 2
-        // return all sheets and look specifically for the config sheet
-        function(err, oResults, callback){
-            var o = oResults;
-            o.func = 'GetAllSheets';
-            self.excel.call(o, function(sErr, sResults){
-                if(sErr != null){ console.log({error:sErr}); return false;}
-                console.log(sResults);
-                // look for config sheet
-                var allSheets = sResults.results;
-                var sheetMatchArr = allSheets.filter(function( obj ) {
-                    return obj.name == config.configSheet.name;
-                });
-                if(sheetMatchArr.length > 0){
-                    // it already exists, so just unhide it
-                    var sArr = [{name: config.configSheet.name, 'type':'visible'}];
-                    self.hideUnhideSheets(sArr, function(){
-                        callback(null, allSheets);
-                    });
-                }
-
-                var o = {func:'AddNewWorksheet', wbID: self.currentBookID, worksheetName: config.configSheet.name}
-                self.excel.call(o, function(){
-                    callback(null, allSheets);
-                });
-            });
-        },
-        //func 3
-        // now you know the config sheet is there, finally do some processing
-        function(allSheets, callback){
-
-            // loop through each visible sheet and ask whether input or output
-            // get date
-            // get fields
-            // figure out custom fields
-
-            var sw = self.content.createNewSubwindow();
-            self.content.showSubWindow(sw);
-            self.content.displaySheetMenu(sw, allSheets);
-        }
-    ]); // end of async
-
+appClass.prototype.closeWorkbook = function(wbID, callback){
+    this.excel.call({
+        func: 'CloseWorkbook',
+        wbID: wbID
+    }, callback);
 }
 
 appClass.prototype.returnTemplateConfig = function(){
@@ -182,20 +130,20 @@ appClass.prototype.returnTemplateConfig = function(){
     };
 }
 
-appClass.prototype.hideUnhideSheets = function(sheetArray, callback){
+appClass.prototype.hideUnhideSheets = function(wbID, sheetArray, callback){
     if(typeof callback != 'function') callback = this.excelReturn;
-    var o = {func: 'HideUnhideSheets', sheetArray: sheetArray, wbID: this.currentBookID};
+    var o = {func: 'HideUnhideSheets', sheetArray: sheetArray, wbID: wbID};
     this.excel.call(o, callback);
 }
 
-appClass.prototype.showExcelRangePrompt = function(callback){
+appClass.prototype.showExcelRangePrompt = function(wbID, callback){
     var self = this;
     if(hasWindow) self.w.hide();
     self.showHideExcel(true);
     self.bringToFront(function(){
         self.excel.call({
             func: 'ShowExcelRangePrompt',
-            wbID: self.currentBookID,
+            wbID: wbID,
             promptText: 'Select fields'
         }, function(err, ret){
             self.showHideExcel(false);
@@ -206,48 +154,34 @@ appClass.prototype.showExcelRangePrompt = function(callback){
     //ShowExcelRangePrompt
 }
 
-appClass.prototype.findDataValuesByDim = function(sheet, rowAddr, colAddr, callback){
+appClass.prototype.findDataValuesByDim = function(p, callback){
+    //sheet, rowAddr, colAddr
     var self = this;
     self.excel.call({
         func: 'ReturnDataValsByDims',
-        wbID: self.currentBookID,
-        sheetName: sheet,
-        rowAddress: rowAddr,
-        colAddress: colAddr
+        wbID: p.bookID,
+        sheetName: p.sheet,
+        rowAddress: p.rowAddr,
+        colAddress: p.colAddr
     }, callback);
 }
 
-appClass.prototype.returnRangeValues = function(sheet, address, callback){
+appClass.prototype.returnRangeValues = function(wbID, sheet, address, callback){
     var self = this;
     self.excel.call({
         func: 'ReturnSelectedRangeAsArray',
-        wbID: self.currentBookID,
+        wbID: wbID,
         sheetName: sheet,
         rangeAddress: address
     }, callback);
 }
 
-/*appClass.prototype.returnRangeValues = function(callback){
-    var self = this;
-    self.showExcelRangePrompt(function(ret){
-        if(typeof ret == 'object'){
-            if(typeof callback != 'function') callback = self.excelReturn;
-            self.excel.call({
-                func: 'ReturnSelectedRangeAsArray',
-                wbID: self.currentBookID,
-                sheetName: ret.results.sheet,
-                rangeAddress: ret.results.address
-            }, callback);
-        }
-    });
-}*/
-
-appClass.prototype.returnNamedRangeValues = function(nrArray, callback){
+appClass.prototype.returnNamedRangeValues = function(p, callback){
     var self = this;
     self.excel.call({
         func: 'ReturnNamedRangeAsArray',
-        wbID: self.currentBookID,
-        nrArray: nrArray
+        wbID: p.bookID,
+        nrArray: p.nrArray
     }, callback);
 
 }
@@ -266,7 +200,7 @@ appClass.prototype.bringToFront = function(callback){
     }, callback);
 }
 
-appClass.prototype.getHighlightedText = function(){
+appClass.prototype.getHighlightedText = function(wbID){
     var self = this;
 
     var currentText = null;
@@ -275,7 +209,7 @@ appClass.prototype.getHighlightedText = function(){
 
         self.excel.call({
             func: 'GetSelectedRangeAddress',
-            wbID: self.currentBookID
+            wbID: wbID
         }, function(error, result){
             count++;
             console.log({result: result, error: error});

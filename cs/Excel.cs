@@ -142,6 +142,7 @@ namespace GSEXCEL {
 
             var savePath = ((string)p.template.savePath + p.wbID + ".xlsx").Replace("/", "\\");
             try {
+                Console.WriteLine(savePath);
                 this.wb[p.wbID].SaveAs(@savePath);
                 p.success = true;
             }
@@ -353,6 +354,13 @@ namespace GSEXCEL {
         public object CreateNewWorkbook(dynamic p){
             this.CheckOnApp(p);
             this.wb[p.wbID] = (Excel.Workbook) this.excelApp.Workbooks.Add();
+            p.success = true;
+            return p;
+        }
+
+        public object CloseWorkbook(dynamic p){
+            wb[p.wbID].Save();
+            wb[p.wbID].Close(0);
             p.success = true;
             return p;
         }
