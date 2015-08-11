@@ -45,7 +45,7 @@ var auto = new function(){
             console.log('Full process completed');
             console.log({ret:ret, err:err});
 
-            if(err != false) // not running
+            if(err !== null && err !== 'undefined') // not running
                 return;
 
             // success
