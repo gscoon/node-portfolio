@@ -44,7 +44,7 @@ var auto = new function(){
             setTimeout(startTemplateProcess, 1000 * 5);
             console.log('Full process completed');
             console.log({ret:ret, err:err});
-            
+
             if(err != false) // not running
                 return;
 
@@ -68,6 +68,7 @@ var auto = new function(){
                 fieldLabelStart: [1,2], // cell B1
                 src: rObj.src,
                 savePath: rObj.dest,
+                saveName: rObj.mfi_id,
                 pasteValSheets: rObj.configObj.reportTemplate.pasteValsSheet,
                 nrPrefix: {
                     mapping: 'mapping',

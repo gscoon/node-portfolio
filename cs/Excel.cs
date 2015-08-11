@@ -140,7 +140,7 @@ namespace GSEXCEL {
 
             this.excelApp.ScreenUpdating = true;
 
-            var savePath = ((string)p.template.savePath + p.wbID + ".xlsx").Replace("/", "\\");
+            var savePath = ((string)p.template.savePath + p.saveName + ".xlsx").Replace("/", "\\");
             try {
                 Console.WriteLine(savePath);
                 this.wb[p.wbID].SaveAs(@savePath);
