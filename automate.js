@@ -68,7 +68,7 @@ var auto = new function(){
                 fieldLabelStart: [1,2], // cell B1
                 src: rObj.src,
                 savePath: rObj.dest,
-                saveName: rObj.mfi_id,
+                saveName: rObj.mfi_id.toString(),
                 pasteValSheets: rObj.configObj.reportTemplate.pasteValsSheet,
                 nrPrefix: {
                     mapping: 'mapping',
