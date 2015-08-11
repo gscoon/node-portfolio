@@ -88,7 +88,9 @@ namespace GSEXCEL {
             // loop through each data table
             foreach(var dataTable in p.data) {
                 int numberOfRows = dataTable.results.Length;
-                int numberOfColumns = this.ReturnColumnsCount(dataTable.results[0]);
+
+                // int numberOfColumns = this.ReturnColumnsCount(dataTable.results[0]);
+                int numberOfColumns = dataTable.colCount;
 
                 // set dumping range
                 var startCell = (Excel.Range) dataSheet.Cells[p.template.dataStart[0], p.template.dataStart[1] + offset];

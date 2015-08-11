@@ -25,6 +25,8 @@ var dbClass = function(){
                         runQuery(q.query_string, params, function(qErr, qResults, fields){
                             q.results = qResults;
                             q.fields = fields;
+                            q.rowCount = qResults.length;
+                            q.colCount = fields.length;
                             mapCallBack(qErr, q);
                         });
                         return true;
