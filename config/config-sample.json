@@ -1,0 +1,9 @@
+{
+    "db": {
+        "server": "localhost",
+        "port": 3306,
+        "name": "dwm",
+        "user": "user name",
+        "password": "insert password"
+    }
+}

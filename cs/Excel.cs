@@ -88,7 +88,9 @@ namespace GSEXCEL {
             // loop through each data table
             foreach(var dataTable in p.data) {
                 int numberOfRows = dataTable.results.Length;
-                int numberOfColumns = this.ReturnColumnsCount(dataTable.results[0]);
+
+                // int numberOfColumns = this.ReturnColumnsCount(dataTable.results[0]);
+                int numberOfColumns = dataTable.colCount;
 
                 // set dumping range
                 var startCell = (Excel.Range) dataSheet.Cells[p.template.dataStart[0], p.template.dataStart[1] + offset];
@@ -140,8 +142,9 @@ namespace GSEXCEL {
 
             this.excelApp.ScreenUpdating = true;
 
-            var savePath = ((string)p.template.savePath + p.wbID + ".xlsx").Replace("/", "\\");
+            var savePath = ((string)p.template.savePath + p.template.saveName + ".xlsx").Replace("/", "\\");
             try {
+                Console.WriteLine(savePath);
                 this.wb[p.wbID].SaveAs(@savePath);
                 p.success = true;
             }
@@ -353,6 +356,13 @@ namespace GSEXCEL {
         public object CreateNewWorkbook(dynamic p){
             this.CheckOnApp(p);
             this.wb[p.wbID] = (Excel.Workbook) this.excelApp.Workbooks.Add();
+            p.success = true;
+            return p;
+        }
+
+        public object CloseWorkbook(dynamic p){
+            wb[p.wbID].Save();
+            wb[p.wbID].Close(0);
             p.success = true;
             return p;
         }

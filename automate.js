@@ -1,9 +1,7 @@
 require('./js/site');
 
 var auto = new function(){
-    var templateLoop = function(){
-        setInterval(startTemplateProcess, 1000 * 30);
-    }
+    var inProgress = false;
 
     var startTemplateProcess = function(){
         var row = null;
@@ -15,17 +13,13 @@ var auto = new function(){
             },
             // 2. make sure everything is set correctly
             function(ret, fields, callback){
-                if(ret.length == 0){
-                    callback("No refresh found");
-                    return false;
-                }
+                if(ret.length == 0)
+                    return callback("No refresh found");
 
                 row = ret[0];
 
-                if(row.config == null || !row.config.isJSONString()){
-                    callback("Config not JSON");
-                    return false;
-                }
+                if(row.config == null || !row.config.isJSONString())
+                    return callback("Config not JSON");
 
                 row.configObj = JSON.parse(row.config);
                 callback(null);
@@ -42,28 +36,30 @@ var auto = new function(){
             },
             // 6.
             function(ret, fields, callback){
+                row.bookID = site.rand(5);
                 processReportingTemplate(row, callback);
             }
         ], function(err, ret){
-            console.log({ret:ret, err:err});
+            // FInal callback
+            setTimeout(startTemplateProcess, 1000 * 5);
             console.log('Full process completed');
-            site.db.updateRefreshTable(row.refresh_id, 'completed', function(){
+            console.log({ret:ret, err:err});
 
+            if(err !== null && err !== 'undefined') // not running
+                return;
+
+            // success
+            site.closeWorkbook(row.bookID, emptyFunc);
+            site.db.updateRefreshTable(row.refresh_id, 'completed', function(){
                 console.log('ended ' + site.moment().format("YYYY-MM-DD HH:mm:ss"));
             });
         });
     }
 
-    // get refresh
-    // get template
-    // parse json
-    // get queries
-
 
     var processReportingTemplate = function(rObj, callback){
         console.log('processReportingTemplate');
         var mfiID = rObj.mfi_id;
-        site.currentBookID = site.rand(5);
         var excelObj = {
             func: 'PopulateDataSheet',
             template: {
@@ -72,6 +68,7 @@ var auto = new function(){
                 fieldLabelStart: [1,2], // cell B1
                 src: rObj.src,
                 savePath: rObj.dest,
+                saveName: rObj.mfi_id.toString(),
                 pasteValSheets: rObj.configObj.reportTemplate.pasteValsSheet,
                 nrPrefix: {
                     mapping: 'mapping',
@@ -80,7 +77,7 @@ var auto = new function(){
                     data: 'data'
                 }
             },
-            wbID: site.currentBookID,
+            wbID: rObj.bookID,
             data: rObj.data,
             fieldMapping: site.returnFieldMapping(rObj.data)
         };
@@ -105,7 +102,7 @@ var auto = new function(){
                     var nrArray = [t.date.nr, t.field.nr];
                     if(t.customDim.nr != null)
                         nrArray.push(t.customField.nr);
-                    site.returnNamedRangeValues(nrArray, cback);
+                    site.returnNamedRangeValues({nrArray: nrArray, bookID: rObj.bookID}, cback);
                 },
                 // 4b.
                 function(ret, cback){
@@ -121,7 +118,8 @@ var auto = new function(){
                     var columnAddr = nrObj[t.field.nr].value;
                     var rowAddr = nrObj[t.date.nr].value;
                     // pull all data values into a 2 dim array [column][row]
-                    site.findDataValuesByDim(t.sheet, rowAddr, columnAddr,  function(err, ret){
+                    var p = {sheet: t.sheet, rowAddr: rowAddr, colAddr: columnAddr, bookID: rObj.bookID};
+                    site.findDataValuesByDim(p,  function(err, ret){
                         // loop through each data column
                         site.async.each(ret.results, function(colData, cb){
                             var i = ret.results.indexOf(colData);
@@ -180,8 +178,10 @@ var auto = new function(){
         });
     }
 
+    var emptyFunc = function(){}
+
     var __construct = function() {
-        templateLoop();
+        startTemplateProcess();
     }()
 
 }
